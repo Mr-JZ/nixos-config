@@ -116,7 +116,7 @@
   networking.timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
 
   # Set your time zone.
-  time.timeZone = "Europe/Berling";
+  time.timeZone = "Europe/Berlin";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -134,7 +134,7 @@
   };
 
   programs = {
-    firefox.enable = false;
+    firefox.enable = true;
     starship = {
       enable = true;
       settings = {
@@ -229,13 +229,13 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnsupportedSystem = true;
 
   users = {
     mutableUsers = true;
   };
 
   environment.systemPackages = with pkgs; [
-    spice_gtk
     vim
     wget
     killall
@@ -246,6 +246,7 @@
     fastfetch
     htop
     brave
+    google-chrome
     libvirt
     lxqt.lxqt-policykit
     lm_sensors
@@ -283,7 +284,7 @@
     swww
     grim
     slurp
-    gnome.file-roller
+    pkgs.file-roller
     swaynotificationcenter
     imv
     mpv
@@ -291,18 +292,32 @@
     pavucontrol
     tree
     spotify
-    neovide
+    # neovide
     greetd.tuigreet
+    affine
+    go_1_22
+    tesseract4
+    typescript
+    cmake
+    python313Full
+    nodejs_22
+    corepack_22  # This is for building
+    gnumake42  # This is for building
+    bitwarden-cli  # This is the bitwarden cli that is a password manager
+    sox  # This is for audio editing
+    age
+    distrobox
+    aider-chat
+    sesh
+    yubioath-flutter
     nautilus
-    mailspring
+    wakatime-cli
   ];
-
-  security.wrappers.spice-client-glib-usb-acl-helper.source = "${pkgs.spice_gtk}/bin/spice-client-glib-usb-acl-helper";
 
   fonts = {
     packages = with pkgs; [
       noto-fonts-emoji
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       font-awesome
       symbola
       material-icons
@@ -312,6 +327,8 @@
   environment.variables = {
     ZANEYOS_VERSION = "2.2";
     ZANEYOS = "true";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 
   # Extra Portal Configuration
@@ -331,9 +348,18 @@
 
   # Services to start
   services = {
-    udev.packages = [
-      pkgs.android-udev-rules
-    ];
+    pcscd.enable = true; # Enable pcscd for smartcards (yubikey)
+    udev = {
+      packages = [ pkgs.yubikey-personalization pkgs.android-udev-rules ];
+      extraRules = ''
+      ACTION=="remove",\
+       ENV{ID_BUS}=="usb",\
+       ENV{ID_MODEL_ID}=="0407",\
+       ENV{ID_VENDOR_ID}=="1050",\
+       ENV{ID_VENDOR}=="Yubico",\
+       RUN+="${pkgs.systemd}/bin/loginctl hyprlock"
+    '';
+    };
     xserver = {
       enable = false;
       xkb = {
@@ -414,7 +440,6 @@
   services.blueman.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
   hardware.pulseaudio.enable = false;
 
   # Security / Polkit
@@ -436,10 +461,18 @@
       }
     })
   '';
-  security.pam.services.swaylock = {
-    text = ''
-      auth include login
-    '';
+  security.pam = {
+    yubico = {
+      enable = true;
+      debug = true;
+      mode = "challenge-response";
+      id = [ "25751893" ];
+    };
+    services.swaylock = {
+      text = ''
+        auth include login
+      '';
+    };
   };
 
   # Optimization settings and garbage collection automation
@@ -462,19 +495,25 @@
 
   # Virtualization / Containers
   virtualisation.libvirtd.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
   virtualisation.podman = {
     enable = true;
-    dockerCompat = true;
     defaultNetwork.settings.dns_enabled = true;
   };
 
-  # OpenGL
-  hardware.opengl = {
+  virtualisation.docker = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
   };
+
+  # OpenGL
+  # hardware.opengl = {
+  #   enable = true;
+  #   driSupport = true;
+  #   driSupport32Bit = true;
+  # };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

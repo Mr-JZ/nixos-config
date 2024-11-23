@@ -43,6 +43,7 @@ with lib;
           env = QT_AUTO_SCREEN_SCALE_FACTOR, 1
           env = SDL_VIDEODRIVER, x11
           env = MOZ_ENABLE_WAYLAND, 1
+          ***REMOVED***
           exec-once = dbus-update-activation-environment --systemd --all
           exec-once = systemctl --user import-environment QT_QPA_PLATFORMTHEME WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
           exec-once = killall -q swww;sleep .5 && swww init
@@ -50,7 +51,7 @@ with lib;
           exec-once = killall -q swaync;sleep .5 && swaync
           exec-once = nm-applet --indicator
           exec-once = lxqt-policykit-agent
-          exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Wallpapers/beautifulmountainscape.jpg
+          exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Wallpapers/mountainscapedark.jpg
           monitor=,preferred,auto,1
           ${extraMonitorSettings}
           general {
@@ -65,7 +66,7 @@ with lib;
           input {
             kb_layout = us
             kb_options = grp:alt_shift_toggle
-            kb_options = caps:super
+            kb_options = caps:escape
             follow_mouse = 1
             touchpad {
               natural_scroll = false
@@ -84,6 +85,14 @@ with lib;
           windowrulev2 = minsize 1 1, title:^()$,class:^(steam)$
           windowrulev2 = opacity 0.9 0.7, class:^(Brave)$
           windowrulev2 = opacity 0.9 0.7, class:^(thunar)$
+          windowrulev2 = float, title:^(Picture in picture)$
+          windowrulev2 = pin, title:^(Picture in picture)$
+          windowrulev2 = move 1640 1050, title:^(Picture in picture)$
+          windowrulev2 = size 900 530, title:^(Picture in picture)$
+          windowrulev2 = size 900 530, title:^(Picture-in-Picture)$
+          windowrulev2 = move 1640 1050, title:^(Picture-in-Picture)$
+          windowrulev2 = pin, title:^(Picture-in-Picture)$
+          windowrulev2 = float, title:^(Picture-in-Picture)$
           gestures {
             workspace_swipe = true
             workspace_swipe_fingers = 3
@@ -94,7 +103,7 @@ with lib;
             key_press_enables_dpms = false
           }
           animations {
-            enabled = yes
+            enabled = false
             bezier = wind, 0.05, 0.9, 0.1, 1.05
             bezier = winIn, 0.1, 1.1, 0.1, 1.1
             bezier = winOut, 0.3, -0.3, 0, 1
@@ -109,10 +118,6 @@ with lib;
           }
           decoration {
             rounding = 10
-            drop_shadow = true
-            shadow_range = 4
-            shadow_render_power = 3
-            col.shadow = rgba(1a1a1aee)
             blur {
                 enabled = true
                 size = 5
@@ -137,12 +142,14 @@ with lib;
           bind = ${modifier},W,exec,${browser}
           bind = ${modifier},E,exec,emopicker9000
           bind = ${modifier},S,exec,screenshootin
+          bind = ${modifier}SHIFT,S,exec,grim -g "$(slurp)" - | tesseract - - | wl-copy
           bind = ${modifier},D,exec,discord
           bind = ${modifier},O,exec,obs
+          bind = ${modifier}SHIFT,O,exec,obsidian
           bind = ${modifier},C,exec,hyprpicker
           bind = ${modifier},G,exec,gimp
           bind = ${modifier}SHIFT,G,exec,godot4
-          bind = ${modifier},T,exec,thunar
+          bind = ${modifier},T,exec,nautilus
           bind = ${modifier},M,exec,spotify
           bind = ${modifier},Q,killactive,
           bind = ${modifier},P,pseudo,
@@ -199,10 +206,10 @@ with lib;
           bind = ,XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
           bind = ,XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
           binde = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-          bind = ,XF86AudioPlay, exec, playerctl play-pause
-          bind = ,XF86AudioPause, exec, playerctl play-pause
-          bind = ,XF86AudioNext, exec, playerctl next
-          bind = ,XF86AudioPrev, exec, playerctl previous
+          bind = ,XF86AudioPlay, exec, playerctl -p spotify play-pause
+          bind = ,XF86AudioPause, exec, playerctl -p spotify play-pause
+          bind = ,XF86AudioNext, exec, playerctl -p spotify next
+          bind = ,XF86AudioPrev, exec, playerctl -p spotify previous
           bind = ,XF86MonBrightnessDown,exec,brightnessctl set 5%-
           bind = ,XF86MonBrightnessUp,exec,brightnessctl set +5%
         ''

@@ -8,7 +8,6 @@ let
   inherit (import ./variables.nix) gitUsername;
 in
 {
-  programs.adb.enable = true;
   users.users = {
     "${username}" = {
       homeMode = "755";
@@ -20,10 +19,9 @@ in
         "libvirtd"
         "scanner"
         "lp"
-        "kvm"
-        "adbusers"
+        "docker"
       ];
-      shell = pkgs.nushell;
+      shell = pkgs.bash;
       ignoreShellProgramCheck = true;
       packages = with pkgs; [
       ];
