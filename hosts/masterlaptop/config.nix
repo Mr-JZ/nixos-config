@@ -111,9 +111,39 @@
   local.hardware-clock.enable = false;
 
   # Enable networking
-  networking.networkmanager.enable = true;
-  networking.hostName = host;
-  networking.timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
+  networking = {
+    networkmanager.enable = true;
+    hostName = host;
+    timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
+    extraHosts = ''
+    # Blocked Sites
+    127.0.0.1 youtube.com
+    127.0.0.1 www.youtube.com
+    127.0.0.1 m.youtube.com
+    127.0.0.1 twitch.tv
+    127.0.0.1 www.twitch.tv
+    127.0.0.1 instagram.com
+    127.0.0.1 www.instagram.com
+    127.0.0.1 reddit.com
+    127.0.0.1 www.reddit.com
+    127.0.0.1 old.reddit.com
+    127.0.0.1 twitter.com
+    127.0.0.1 x.com
+    127.0.0.1 tiktok.com
+    127.0.0.1 www.tiktok.com
+    127.0.0.1 facebook.com
+    127.0.0.1 www.facebook.com
+    127.0.0.1 pinterest.com
+    127.0.0.1 www.pinterest.com
+    
+    # Block common subdomains
+    127.0.0.1 gaming.youtube.com
+    127.0.0.1 music.youtube.com
+    127.0.0.1 studio.youtube.com
+    127.0.0.1 youtu.be
+    127.0.0.1 player.twitch.tv
+  '';
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
