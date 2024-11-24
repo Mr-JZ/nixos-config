@@ -312,9 +312,10 @@ in
         ghd="gh dash";
         s = "sesh connect $(sesh list | fzf --height 24)";
         ".." = "cd ..";
+        sw = "find ~/Pictures/Wallpapers ~/Pictures/Background -type f \\( -iname \"*.jpg\" -o -iname \"*.png\" -o -iname \"*.jpeg\" \\) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}";
       };
     };
-    nushell = { 
+    nushell = {
           enable = false;
           extraConfig = ''
             $env.config = {
