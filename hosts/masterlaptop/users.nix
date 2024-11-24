@@ -20,6 +20,8 @@ in
         "scanner"
         "lp"
         "docker"
+        "uinput"
+        "input"
       ];
       shell = pkgs.bash;
       ignoreShellProgramCheck = true;

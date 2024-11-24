@@ -348,6 +348,10 @@
 
   # Services to start
   services = {
+    kanata = {
+      enable = true;
+      keyboards.default.configFile = ../../config/kanata/default.kbd;
+    };
     pcscd.enable = true; # Enable pcscd for smartcards (yubikey)
     udev = {
       packages = [ pkgs.yubikey-personalization pkgs.android-udev-rules ];
