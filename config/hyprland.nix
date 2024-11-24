@@ -93,6 +93,10 @@ with lib;
           windowrulev2 = move 1640 1050, title:^(Picture-in-Picture)$
           windowrulev2 = pin, title:^(Picture-in-Picture)$
           windowrulev2 = float, title:^(Picture-in-Picture)$
+          windowrulev2 = float, title:^(YAD)
+          windowrulev2 = pin, title:^(YAD)
+          windowrulev2 = move 2200 60, title:^(YAD)
+          windowrulev2 = size 320 140, title:^(YAD)
           gestures {
             workspace_swipe = true
             workspace_swipe_fingers = 3
@@ -152,7 +156,9 @@ with lib;
           bind = ${modifier},T,exec,nautilus
           bind = ${modifier},M,exec,spotify
           bind = ${modifier},Q,killactive,
-          bind = ${modifier},P,pseudo,
+          bind = ${modifier},P,exec,uair | yad --progress --no-buttons --css="* { font-size: 80px; }"
+          bind = ${modifier}SHIFT,P,exec,uairctl toggle
+          bind = ${modifier},N,exec,uairctl next
           bind = ${modifier}SHIFT,I,togglesplit,
           bind = ${modifier},F,fullscreen,
           bind = ${modifier}SHIFT,F,togglefloating,

@@ -344,6 +344,7 @@
     wakatime-cli
     via
     python311Packages.playwright
+    uair
   ];
 
   fonts = {
