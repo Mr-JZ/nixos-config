@@ -342,6 +342,8 @@
     yubioath-flutter
     nautilus
     wakatime-cli
+    via
+    python311Packages.playwright
   ];
 
   fonts = {
