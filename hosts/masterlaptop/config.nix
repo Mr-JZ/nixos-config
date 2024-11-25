@@ -345,6 +345,7 @@
     via
     python311Packages.playwright
     uair
+    yq
   ];
 
   fonts = {

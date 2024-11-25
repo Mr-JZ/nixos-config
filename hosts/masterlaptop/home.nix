@@ -215,6 +215,11 @@ in
         confirm_os_window_close = 0;
       };
       keybindings = {
+        "alt+1" = "send_text all \\x021";
+        "alt+2" = "send_text all \\x022";
+        "alt+3" = "send_text all \\x023";
+        "alt+4" = "send_text all \\x024";
+        "alt+5" = "send_text all \\x025";
         "alt+g" = "send_key ctrl+b g";
         "alt+d" = "send_text all \\x02G";
         "alt+c" = "send_key ctrl+b c";
