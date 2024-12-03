@@ -338,7 +338,6 @@
     age
     distrobox
     aider-chat
-    sesh
     yubioath-flutter
     nautilus
     wakatime-cli
