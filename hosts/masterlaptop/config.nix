@@ -327,10 +327,8 @@
     affine
     go_1_22
     tesseract4
-    typescript
     cmake
     python313Full
-    nodejs_22
     corepack_22  # This is for building
     gnumake42  # This is for building
     bitwarden-cli  # This is the bitwarden cli that is a password manager
