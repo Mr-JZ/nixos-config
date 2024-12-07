@@ -203,6 +203,7 @@ with lib;
           bind = ${modifier}SHIFT,0,movetoworkspace,10
           bind = ${modifier}CONTROL,right,workspace,e+1
           bind = ${modifier}CONTROL,left,workspace,e-1
+          bind = ${modifier}CONTROL,W,exec,distrobox enter windsurf -e windsurf
           bind = ${modifier},mouse_down,workspace, e+1
           bind = ${modifier},mouse_up,workspace, e-1
           bindm = ${modifier},mouse:272,movewindow
