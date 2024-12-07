@@ -356,6 +356,7 @@
       font-awesome
       symbola
       material-icons
+      google-fonts
     ];
   };
 
