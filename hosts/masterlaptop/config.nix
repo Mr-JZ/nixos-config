@@ -344,6 +344,9 @@
     uair
     yq
     toipe
+    insync
+    insync-nautilus
+    thunderbird
   ];
 
   fonts = {
