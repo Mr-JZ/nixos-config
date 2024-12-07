@@ -343,6 +343,7 @@
     python311Packages.playwright
     uair
     yq
+    toipe
   ];
 
   fonts = {
