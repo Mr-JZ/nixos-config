@@ -2,6 +2,7 @@
   pkgs,
   username,
   host,
+  inputs,
   ...
 }:
 let
@@ -112,6 +113,7 @@ in
   home.packages = [
     (import ../../scripts/emopicker9000.nix { inherit pkgs; })
     (import ../../scripts/play-random-meditation.nix { inherit pkgs; })
+    (import ../../scripts/ai-spellcheck.nix { inherit pkgs; })
     (import ../../scripts/task-waybar.nix { inherit pkgs; })
     (import ../../scripts/squirtle.nix { inherit pkgs; })
     (import ../../scripts/nvidia-offload.nix { inherit pkgs; })
@@ -416,7 +418,6 @@ in
           };
         };
     carapace.enable = true;
-    carapace.enableNushellIntegration = true;
 
     starship = { enable = true;
         settings = {
