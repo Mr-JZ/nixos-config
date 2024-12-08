@@ -95,8 +95,16 @@ with lib;
           windowrulev2 = float, title:^(Picture-in-Picture)$
           windowrulev2 = float, title:^(YAD)
           windowrulev2 = pin, title:^(YAD)
-          windowrulev2 = move 2200 60, title:^(YAD)
-          windowrulev2 = size 320 140, title:^(YAD)
+          windowrulev2 = move 1950 60, title:^(YAD)
+          windowrulev2 = size 590 200, title:^(YAD)
+          windowrulev2 = float, initialTitle:^(Calendar Reminders)
+          windowrulev2 = pin, initialTitle:^(Calendar Reminders)
+          windowrulev2 = move 2200 60, initialTitle:^(Calendar Reminders)
+          windowrulev2 = size 320 140, initialTitle:^(Calendar Reminders)
+          windowrulev2 = float, initialTitle:^(Edit Item)
+          windowrulev2 = pin, initialTitle:^(Edit Item)
+          windowrulev2 = move 650 405, initialTitle:^(Edit Item)
+          windowrulev2 = size 1140 820, initialTitle:^(Edit Item)
           gestures {
             workspace_swipe = true
             workspace_swipe_fingers = 3
@@ -151,7 +159,7 @@ with lib;
           bind = ${modifier},O,exec,obs
           bind = ${modifier}SHIFT,O,exec,obsidian
           bind = ${modifier},C,exec,hyprpicker
-          bind = ${modifier},G,exec,gimp
+          bind = ${modifier},G,exec,ai-spellcheck
           bind = ${modifier}SHIFT,G,exec,godot4
           bind = ${modifier},T,exec,nautilus
           bind = ${modifier},M,exec,spotify
