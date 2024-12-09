@@ -4,6 +4,7 @@
   host,
   username,
   options,
+  inputs,
   ...
 }:
 
@@ -17,7 +18,7 @@
     ../../modules/intel-drivers.nix
     ../../modules/vm-guest-services.nix
     ../../modules/local-hardware-clock.nix
-  ];
+  ]; 
 
   boot = {
     # Kernel
@@ -117,16 +118,16 @@
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
     extraHosts = ''
     # Blocked Sites
-    127.0.0.1 youtube.com
-    127.0.0.1 www.youtube.com
-    127.0.0.1 m.youtube.com
-    127.0.0.1 twitch.tv
-    127.0.0.1 www.twitch.tv
+    # 127.0.0.1 youtube.com
+    # 127.0.0.1 www.youtube.com
+    # 127.0.0.1 m.youtube.com
+    # 127.0.0.1 twitch.tv
+    # 127.0.0.1 www.twitch.tv
     127.0.0.1 instagram.com
     127.0.0.1 www.instagram.com
-    127.0.0.1 reddit.com
-    127.0.0.1 www.reddit.com
-    127.0.0.1 old.reddit.com
+    # 127.0.0.1 reddit.com
+    # 127.0.0.1 www.reddit.com
+    # 127.0.0.1 old.reddit.com
     127.0.0.1 twitter.com
     127.0.0.1 x.com
     127.0.0.1 tiktok.com
@@ -347,6 +348,7 @@
     insync
     insync-nautilus
     thunderbird
+    jq
   ];
 
   fonts = {
