@@ -136,13 +136,6 @@
     127.0.0.1 www.facebook.com
     127.0.0.1 pinterest.com
     127.0.0.1 www.pinterest.com
-    
-    # Block common subdomains
-    127.0.0.1 gaming.youtube.com
-    127.0.0.1 music.youtube.com
-    127.0.0.1 studio.youtube.com
-    127.0.0.1 youtu.be
-    127.0.0.1 player.twitch.tv
   '';
   };
 
