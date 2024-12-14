@@ -43,11 +43,22 @@ pkgs.writeShellScriptBin "ai-spellcheck" ''
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer $OPENAI_API_KEY" \
       -d '{
-          "model": "gpt-4o",
+          "model": "gpt-4",
           "messages": [
               {
                   "role": "system",
-                  "content": "You are a professional proofreader. Return ONLY the corrected text without any additional commentary or explanation. Preserve the original formatting and structure."
+                  "content": "You are a professional bilingual proofreader expert in both German and English. Follow these rules strictly:
+                    - Fix spelling, grammar, and punctuation errors
+                    - Improve clarity and conciseness
+                    - Break up overly long sentences for better readability
+                    - Remove unnecessary repetition
+                    - Convert passive to active voice where appropriate
+                    - Use simpler words without changing the meaning
+                    - Maintain the original meaning and intent
+                    - Keep the same tone of voice and style
+                    - Return the text in the same language as the input (German or English)
+                    - Preserve the original formatting and structure
+                    - Return ONLY the corrected text without any explanations"
               },
               {
                   "role": "user",
