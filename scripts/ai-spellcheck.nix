@@ -35,6 +35,7 @@ pkgs.writeShellScriptBin "ai-spellcheck" ''
 
   # Get input text
   INPUT_TEXT=$(get_input "$@")
+  echo "Input text: $INPUT_TEXT"
   # Check if input is empty
   # Trim whitespace and check if input is empty, null, or whitespace-only
 
@@ -74,17 +75,40 @@ pkgs.writeShellScriptBin "ai-spellcheck" ''
       -H "Authorization: Bearer $OPENAI_API_KEY" \
       -d @-)
 
-  if $RESPONSE | jq -e .error; then
-      notify-send -u critical "Grammar Checker" "OpenAI API error: $($RESPONSE | jq -r .error.message)"
+  # Check if the response contains an error
+  if echo "$RESPONSE" | jq -e 'has("error")' >/dev/null; then
+      ERROR_MSG=$(echo "$RESPONSE" | jq -r '.error.message')
+      notify-send -u critical "Grammar Checker" "OpenAI API error: $ERROR_MSG"
       exit 1
   fi
 
-  CORRECTED_TEXT=$($RESPONSE | jq -r .choices[0].message.content)
+  # Extract token usage and calculate cost
+  PROMPT_TOKENS=$(echo "$RESPONSE" | jq -r '.usage.prompt_tokens')
+  COMPLETION_TOKENS=$(echo "$RESPONSE" | jq -r '.usage.completion_tokens')
+  TOTAL_TOKENS=$(echo "$RESPONSE" | jq -r '.usage.total_tokens')
 
-  notify-send -u critical "Grammar Checker" "Text optimized for readability and clarity."
+  # GPT-4 pricing (as of 2024): $0.03/1K prompt tokens, $0.06/1K completion tokens
+  PROMPT_COST=$(echo "scale=4; $PROMPT_TOKENS * 0.03 / 1000" | bc)
+  COMPLETION_COST=$(echo "scale=4; $COMPLETION_TOKENS * 0.06 / 1000" | bc)
+  TOTAL_COST=$(echo "scale=4; $PROMPT_COST + $COMPLETION_COST" | bc)
 
-  echo "$CORRECTED_TEXT" | wl-copy
+  # echo $RESPONSE
+  CORRECTED_TEXT=$(echo $RESPONSE | jq -r '.choices[0].message.content')
 
-  # Send desktop notification
-  notify-send -u normal "Grammar Checker" "Text corrected and copied to clipboard!"
+  # Copy corrected text to clipboard
+  # echo "$CORRECTED_TEXT"
+  printf '%s' "$CORRECTED_TEXT" | wl-copy
+
+  # Create detailed cost message
+  COST_MSG="Tokens used:
+  Prompt: $PROMPT_TOKENS ($PROMPT_COST$)
+  Completion: $COMPLETION_TOKENS ($COMPLETION_COST$)
+  Total: $TOTAL_TOKENS tokens ($TOTAL_COST$)"
+
+  # Send desktop notifications
+  notify-send -u normal "Grammar Checker" "Text corrected and copied to clipboard!\n\n$COST_MSG"
+
+  # Print cost information to terminal
+  echo -e "\n=== Usage Statistics ==="
+  echo -e "$COST_MSG"
 ''
