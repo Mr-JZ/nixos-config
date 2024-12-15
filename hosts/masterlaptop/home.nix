@@ -171,6 +171,7 @@ in
     pkgs.zoom-us
     pkgs.slack
     pkgs.gum
+    pkgs.bc
   ];
 
   services = {
