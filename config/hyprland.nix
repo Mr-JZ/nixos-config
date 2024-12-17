@@ -162,6 +162,7 @@ with lib;
           bind = ${modifier},G,exec,ai-spellcheck
           bind = ${modifier}SHIFT,G,exec,godot4
           bind = ${modifier},T,exec,nautilus
+          bind = ${modifier}SHIFT,T,exec,ai-translate-en
           bind = ${modifier},M,exec,spotify
           bind = ${modifier},Q,killactive,
           bind = ${modifier},P,exec,uair | yad --progress --no-buttons --css="* { font-size: 80px; }"
