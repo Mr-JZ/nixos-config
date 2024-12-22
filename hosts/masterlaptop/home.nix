@@ -114,6 +114,7 @@ in
     (import ../../scripts/emopicker9000.nix { inherit pkgs; })
     (import ../../scripts/play-random-meditation.nix { inherit pkgs; })
     (import ../../scripts/ai-spellcheck.nix { inherit pkgs; })
+    (import ../../scripts/ai-en-translate.nix { inherit pkgs; })
     (import ../../scripts/task-waybar.nix { inherit pkgs; })
     (import ../../scripts/squirtle.nix { inherit pkgs; })
     (import ../../scripts/nvidia-offload.nix { inherit pkgs; })
@@ -315,7 +316,9 @@ in
         ls = "eza --icons";
         ll = "eza -lh --icons --grid --group-directories-first";
         la = "eza -lah --icons --grid --group-directories-first";
-        ghc="gh repo clone $(gh repo list | fzf | awk '{print $1}') -- --bare";
+        ghc="repo=$(gh repo list | fzf | awk '{print $1}'); if [ ! -z \"$repo\" ]; then if gh api repos/$repo/contents/package.json --silent >/dev/null 2>&1; then echo \"📦 Found package.json, doing normal clone...\" && gh repo clone $repo; else echo \"🗃️ No package.json, doing bare clone...\" && gh repo clone $repo -- --bare; fi; fi";
+        ghc-c="ghc clone $(gh repo list | fzf | awk '{print $1}')";
+        get-branch="git branch --show-current | sed 's/feature\///' | wl-copy; echo 'copied the branche name'";
         git-hash-copy="printf %s \"$(git rev-parse HEAD)\" | wl-copy";
         z="zoxide";
         ghd="gh dash";
