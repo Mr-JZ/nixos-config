@@ -342,6 +342,8 @@
     insync-nautilus
     thunderbird
     jq
+    ausweisapp
+    inkscape
   ];
 
   fonts = {
