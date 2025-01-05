@@ -123,8 +123,8 @@
     # 127.0.0.1 m.youtube.com
     # 127.0.0.1 twitch.tv
     # 127.0.0.1 www.twitch.tv
-    127.0.0.1 instagram.com
-    127.0.0.1 www.instagram.com
+    # 127.0.0.1 instagram.com
+    # 127.0.0.1 www.instagram.com
     # 127.0.0.1 reddit.com
     # 127.0.0.1 www.reddit.com
     # 127.0.0.1 old.reddit.com
@@ -344,6 +344,8 @@
     jq
     ausweisapp
     inkscape
+    kdenlive
+    todoist-electron
   ];
 
   fonts = {
@@ -546,11 +548,12 @@
   };
 
   # OpenGL
-  # hardware.opengl = {
-  #   enable = true;
-  #   driSupport = true;
-  #   driSupport32Bit = true;
-  # };
+ # hardware.opengl = {
+ #   enable = true;
+ #   extraPackages = with pkgs; [
+ #     rocmPackages.clr.icd
+ #   ];
+ # };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
