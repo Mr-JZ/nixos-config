@@ -306,13 +306,30 @@
         "type": "github"
       }
     },
+    "nixpkgs_4": {
+      "locked": {
+        "lastModified": 1735834308,
+        "narHash": "sha256-dklw3AXr3OGO4/XT1Tu3Xz9n/we8GctZZ75ZWVqAVhk=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "6df24922a1400241dae323af55f30e4318a6ca65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
         "fine-cmdline": "fine-cmdline",
         "home-manager": "home-manager_2",
         "nixpkgs": "nixpkgs_2",
-        "stylix": "stylix"
+        "stylix": "stylix",
+        "waybar-timer": "waybar-timer"
       }
     },
     "stylix": {
@@ -422,6 +439,25 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "tinted-tmux",
+        "type": "github"
+      }
+    },
+    "waybar-timer": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_4"
+      },
+      "locked": {
+        "lastModified": 1736079525,
+        "narHash": "sha256-0bY4v6kazygScYBUH0v4HvROOG3NXqwfC+9QeSI8Evg=",
+        "owner": "Mr-JZ",
+        "repo": "waybar-timer",
+        "rev": "14a03f3210c3d0e9e76647144e92c1a6dfd6261f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mr-JZ",
+        "ref": "nix-compatible",
+        "repo": "waybar-timer",
         "type": "github"
       }
     }
