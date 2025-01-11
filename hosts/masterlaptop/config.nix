@@ -79,7 +79,7 @@
     cursor.size = 24;
     fonts = {
       monospace = {
-        package = pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; };
+        package = pkgs.nerd-fonts.jetbrains-mono;
         name = "JetBrainsMono Nerd Font Mono";
       };
       sansSerif = {
@@ -346,11 +346,15 @@
     inkscape
     kdenlive
     todoist-electron
+    hyprland-qtutils
+    devenv
+    direnv
+    webex
   ];
 
   fonts = {
     packages = with pkgs; [
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       noto-fonts-cjk-sans
       font-awesome
       symbola
@@ -479,7 +483,7 @@
   services.blueman.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
 
   # Security / Polkit
   security.rtkit.enable = true;
@@ -505,7 +509,7 @@
       enable = true;
       debug = true;
       mode = "challenge-response";
-      id = [ "25751893" ];
+      id = [ "25751893" "30617633" ];
     };
     services.swaylock = {
       text = ''
@@ -522,8 +526,9 @@
         "nix-command"
         "flakes"
       ];
-      substituters = [ "https://hyprland.cachix.org" ];
-      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+      substituters = [ "https://hyprland.cachix.org" "https://devenv.cachix.org" ];
+      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=" ];
+      trusted-users = [ "root" "mr-jz"];
     };
     gc = {
       automatic = true;
