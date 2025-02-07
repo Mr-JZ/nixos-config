@@ -349,7 +349,24 @@
     hyprland-qtutils
     devenv
     direnv
-    webex
+    # wl-screenrec
+    lf
+    nodejs
+    (pkgs.buildGoModule {
+      pname = "gorun";
+      version = "0.1.0";
+      
+      src = pkgs.fetchFromGitHub {
+        owner = "erning";
+        repo = "gorun";
+        rev = "master"; # You might want to pin to a specific commit
+        sha256 = "sha256-2Z5kz6w8k7Pa2U5/p3BZZC7rM6lRvbYnIVnYrcoCEyU="; # You'll need to replace this with the actual hash
+      };
+      
+      # If vendoring is not used, set this to the hash of the dependencies
+      # You'll get an error with the correct hash to use
+      vendorHash = null;
+    })
   ];
 
   fonts = {
