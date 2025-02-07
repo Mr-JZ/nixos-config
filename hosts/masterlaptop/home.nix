@@ -154,9 +154,12 @@ in
     pkgs.php83
     pkgs.php83Packages.composer
     pkgs.luarocks
+    pkgs.lua
     pkgs.julia
-    pkgs.zulu17
+    pkgs.zulu21
     pkgs.libreoffice
+    pkgs.stylua  # Lua formatter
+    pkgs.lua-language-server
     # pkgs.clang
     pkgs.zoxide
     pkgs.obsidian
@@ -219,6 +222,7 @@ in
         wheel_scroll_min_lines = 1;
         window_padding_width = 4;
         confirm_os_window_close = 0;
+        font_family = "JetBrainsMono Nerd Font Mono";
       };
       keybindings = {
         "alt+1" = "send_text all \\x021";
@@ -253,15 +257,11 @@ in
       enable = true;
       enableCompletion = true;
       profileExtra = ''
-        #if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-        #  exec Hyprland
-        #fi
-        if [ -f $HOME/.bashrc-personal ]; then
-          source $HOME/.bashrc-personal
-        fi
         eval "$(zoxide init bash)" 
         # include path to PATH
-        export PATH=$PATH:$HOME/go/bin
+        export GOBIN="$HOME/go/bin"
+        export JAVA_HOME="${pkgs.zulu21}"
+        export PATH="$GOBIN:$JAVA_HOME/bin:$PATH"
 
         if command -v fzf-share >/dev/null; then
           source "$(fzf-share)/key-bindings.bash"
@@ -270,38 +270,7 @@ in
         # SSH agent setup
         eval "$(ssh-agent -s)"
         ssh-add ~/github/github_mr-jz
-
-        # Cache file for API keys
-        API_CACHE_FILE="$HOME/.cache/api_keys"
-        API_CACHE_TIMEOUT=86400  # 24 hours in seconds
-
-        # Function to update API keys cache
-        update_api_keys() {
-          mkdir -p "$(dirname "$API_CACHE_FILE")"
-          {
-            echo "export OPENAI_API_KEY=\"$(bw get password OPENAI_API_KEY)\""
-            echo "export ANTHROPIC_API_KEY=\"$(bw get password e64fda39-be64-420a-b76a-b231013cd92b)\""
-            echo "export GEMINI_API_KEY=\"$(bw get password GEMINI_API_KEY)\""
-            echo "export GROQ_API_KEY=\"$(bw get password GROQ_API_KEY)\""
-            echo "export OPENROUTER_API_KEY=\"$(bw get password OPENROUTER_API_KEY)\""
-            echo "export API_CACHE_TIMESTAMP=$(date +%s)"
-          } > "$API_CACHE_FILE"
-        }
-
-        # Load or update cache
-        if [ -f "$API_CACHE_FILE" ]; then
-          . "$API_CACHE_FILE"
-          current_time=$(date +%s)
-          cache_age=$((current_time - API_CACHE_TIMESTAMP))
-          
-          if [ $cache_age -gt $API_CACHE_TIMEOUT ]; then
-            update_api_keys
-            . "$API_CACHE_FILE"
-          fi
-        else
-          update_api_keys
-          . "$API_CACHE_FILE"
-        fi
+        source ~/.cache/api_keys
       '';
       initExtra = ''
       '';
