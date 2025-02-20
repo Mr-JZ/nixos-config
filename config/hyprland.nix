@@ -51,7 +51,12 @@ with lib;
           exec-once = killall -q swaync;sleep .5 && swaync
           exec-once = nm-applet --indicator
           exec-once = lxqt-policykit-agent
-          exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Wallpapers/mountainscapedark.jpg
+          exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Cyborg/cyborg.jpg
+          # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/Women/AdobeStock_251164275.jpeg
+          # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/Women/894252.jpg
+          # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/Women/Lana-Rhoades-00.jpg
+          # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/Women/14996783495963468d341a32.62909855.jpg
+          # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/City/253646.jpg
           monitor=,preferred,auto,1
           ${extraMonitorSettings}
           general {
