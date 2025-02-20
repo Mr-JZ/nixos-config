@@ -11,9 +11,15 @@ pkgs.writeShellScriptBin "ai-spellcheck" ''
       exit 1
   }
 
-  # Check if OpenAI API key is set
+  # Check for and source API keys file
+  API_KEYS_FILE="$HOME/.cache/api_keys"
+  if [ -f "$API_KEYS_FILE" ]; then
+      source "$API_KEYS_FILE"
+  fi
+
+  # Check if OpenAI API key is set (either from environment or from file)
   if [ -z "$OPENAI_API_KEY" ]; then
-      notify-send -u critical "Grammar Checker" "OpenAI API key is not set. Please set OPENAI_API_KEY environment variable."
+      notify-send -u critical "Grammar Checker" "OpenAI API key is not set. Please set OPENAI_API_KEY environment variable or add it to $API_KEYS_FILE"
       exit 1
   fi
   # Function to check input method
