@@ -334,7 +334,8 @@
     nautilus
     wakatime-cli
     via
-    python311Packages.playwright
+    python313Packages.playwright
+    python313Packages.pydantic
     uair
     yq
     toipe
