@@ -102,11 +102,11 @@ in
       gtk-application-prefer-dark-theme = 1;
     };
   };
-  qt = {
-    enable = true;
-    style.name = "adwaita-dark";
-    platformTheme.name = "gtk3";
-  };
+  # qt = {
+  #   enable = true;
+  #   style.name = "adwaita-dark";
+  #   platformTheme.name = "gtk3";
+  # };
 
 
   # Scripts
@@ -114,6 +114,7 @@ in
     (import ../../scripts/emopicker9000.nix { inherit pkgs; })
     (import ../../scripts/play-random-meditation.nix { inherit pkgs; })
     (import ../../scripts/ai-spellcheck.nix { inherit pkgs; })
+    (import ../../scripts/42-make-local.nix { inherit pkgs; })
     (import ../../scripts/recording-window.nix { inherit pkgs; })
     (import ../../scripts/ai-en-translate.nix { inherit pkgs; })
     (import ../../scripts/task-waybar.nix { inherit pkgs; })
@@ -273,6 +274,7 @@ in
         source ~/.cache/api_keys
       '';
       initExtra = ''
+        source ~/.gcloudrc
       '';
       shellAliases = {
         ai = "aider --model gemini/gemini-1.5-pro-latest --dark-mode --auto-commits $(find . -type f | fzf --multi | tr '\n' ' ')";
