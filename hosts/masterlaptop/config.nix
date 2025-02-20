@@ -368,6 +368,8 @@
       # You'll get an error with the correct hash to use
       vendorHash = null;
     })
+    mongodb-compass
+    teams-for-linux
   ];
 
   fonts = {
