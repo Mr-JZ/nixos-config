@@ -242,10 +242,6 @@ in
         "alt+f" = "send_key ctrl+b m";
         "alt+'" = "send_key ctrl+b \"";
         # "alt+t" = "send_key ctrl+b %";
-        "f1" = "send_key ctrl+b R";
-        "f2" = "send_key ctrl+b K";
-        "f3" = "send_key ctrl+b A";
-        "f4" = "send_key ctrl+b J";
       };
       extraConfig = ''
         tab_bar_style fade
@@ -297,6 +293,7 @@ in
         s = "sesh connect $(sesh list | fzf --height 24)";
         ".." = "cd ..";
         sw = "find ~/Pictures/Wallpapers ~/Pictures/Background -type f \\( -iname \"*.jpg\" -o -iname \"*.png\" -o -iname \"*.jpeg\" \\) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}";
+        ro = "cd $(git rev-parse --show-toplevel)";
       };
     };
     nushell = {
