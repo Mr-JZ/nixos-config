@@ -370,6 +370,7 @@
     })
     mongodb-compass
     teams-for-linux
+    glab
   ];
 
   fonts = {
