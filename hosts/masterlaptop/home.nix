@@ -294,6 +294,7 @@ in
         ".." = "cd ..";
         sw = "find ~/Pictures/Wallpapers ~/Pictures/Background -type f \\( -iname \"*.jpg\" -o -iname \"*.png\" -o -iname \"*.jpeg\" \\) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}";
         ro = "cd $(git rev-parse --show-toplevel)";
+        gs = "git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview \"git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \\$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\")";
       };
     };
     nushell = {
