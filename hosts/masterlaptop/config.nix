@@ -348,7 +348,6 @@
     jq
     ausweisapp
     inkscape
-    kdenlive
     todoist-electron
     hyprland-qtutils
     devenv
