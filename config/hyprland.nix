@@ -158,7 +158,7 @@ with lib;
           bind = ${modifier}SHIFT,N,exec,swaync-client -rs
           bind = ${modifier},W,exec,${browser}
           bind = ${modifier},E,exec,emopicker9000
-          bind = ${modifier},S,exec,screenshootin
+          bind = ${modifier},S,exec,flameshot gui
           bind = ${modifier}SHIFT,S,exec,grim -g "$(slurp)" - | tesseract - - | wl-copy
           bind = ${modifier},D,exec,discord
           bind = ${modifier},O,exec,obs

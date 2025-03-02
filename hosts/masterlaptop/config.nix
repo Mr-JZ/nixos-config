@@ -296,6 +296,9 @@
     brightnessctl
     virt-viewer
     swappy
+    (pkgs.flameshot.overrideAttrs (oldAttrs: {
+      cmakeFlags = oldAttrs.cmakeFlags ++ [ "-DUSE_WAYLAND_GRIM=ON" ];
+    }))
     appimage-run
     networkmanagerapplet
     yad
