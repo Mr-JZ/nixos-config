@@ -373,6 +373,9 @@
     mongodb-compass
     teams-for-linux
     glab
+    mongosh
+    code-cursor
+    bash-completion
   ];
 
   fonts = {
