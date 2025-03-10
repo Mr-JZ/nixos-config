@@ -60,6 +60,30 @@ in
     enable = true;
     userName = "${gitUsername}";
     userEmail = "${gitEmail}";
+
+    includes = [
+      {
+        condition = "gitdir:~/github/";
+        contents = {
+          user = {
+            name = "Jan Zisenis";
+            email = "jan.zisenis@gmail.com";
+          };
+          commit = {
+            gpgSign = true;
+          };
+        };
+      }
+      {
+        condition = "gitdir:~/gitlab/";
+        contents = {
+          user = {
+            name = "Jan Zisenis";
+            email = "jan@zisenis.digital";
+          };
+        };
+      }
+    ];
   };
 
   programs.obs-studio = {
