@@ -419,6 +419,7 @@
       keyboards.default.configFile = ../../config/kanata/default.kbd;
     };
     pcscd.enable = true; # Enable pcscd for smartcards (yubikey)
+    yubikey-agent.enable = true;
     udev = {
       packages = [ pkgs.yubikey-personalization pkgs.android-udev-rules ];
       extraRules = ''
@@ -532,16 +533,31 @@
     })
   '';
   security.pam = {
+    sshAgentAuth.enable = true;
+    u2f = {
+      enable = true;
+      settings = {
+        cue = false;
+        authFile = "/home/${username}/.config/Yubico/u2f_keys";
+      };
+    };
     yubico = {
       enable = true;
       debug = true;
       mode = "challenge-response";
       id = [ "25751893" "30617633" ];
     };
-    services.swaylock = {
-      text = ''
-        auth include login
-      '';
+    services = {
+      login.u2fAuth = true;
+      sudo = {
+        u2fAuth = true;
+        sshAgentAuth = true;
+      };
+      swaylock = {
+        text = ''
+          auth include login
+        '';
+      };
     };
   };
 
