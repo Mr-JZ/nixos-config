@@ -376,6 +376,7 @@
     mongosh
     code-cursor
     bash-completion
+    direnv
   ];
 
   fonts = {
