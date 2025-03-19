@@ -61,6 +61,20 @@ in
     userName = "${gitUsername}";
     userEmail = "${gitEmail}";
 
+    ignores = [
+      ".csvignore"
+      # nix
+      "*.drv"
+      "result"
+      # python
+      "*.py?"
+      "__pycache__/"
+      ".venv/"
+      # direnv
+      ".direnv"
+      ".aider*"
+    ];
+
     includes = [
       {
         condition = "gitdir:~/github/";
@@ -68,9 +82,6 @@ in
           user = {
             name = "Jan Zisenis";
             email = "jan.zisenis@gmail.com";
-          };
-          commit = {
-            gpgSign = true;
           };
         };
       }
