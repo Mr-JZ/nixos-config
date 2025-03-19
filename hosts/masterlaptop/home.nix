@@ -290,6 +290,7 @@ in
       enableCompletion = true;
       profileExtra = ''
         eval "$(zoxide init bash)" 
+        eval "$(direnv hook bash)"
         # include path to PATH
         export GOBIN="$HOME/go/bin"
         export JAVA_HOME="${pkgs.zulu21}"
@@ -303,6 +304,7 @@ in
         eval "$(ssh-agent -s)"
         ssh-add ~/github/github_mr-jz
         source ~/.cache/api_keys
+        export DIRENV_LOG_FORMAT=""
       '';
       initExtra = ''
         source ~/.gcloudrc
