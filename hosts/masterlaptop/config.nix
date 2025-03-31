@@ -315,7 +315,7 @@
     swaynotificationcenter
     imv
     mpv
-    gimp
+    # gimp
     pavucontrol
     tree
     spotify
@@ -509,6 +509,11 @@
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
+
+  hardware.opentabletdriver = {
+    enable = true;
+    daemon.enable = true;
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
