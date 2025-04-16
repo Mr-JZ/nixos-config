@@ -1,12 +1,4 @@
-{
-  config,
-  pkgs,
-  host,
-  username,
-  options,
-  inputs,
-  ...
-}:
+{ config, pkgs, host, username, options, inputs, ... }:
 
 {
   imports = [
@@ -18,7 +10,7 @@
     ../../modules/intel-drivers.nix
     ../../modules/vm-guest-services.nix
     ../../modules/local-hardware-clock.nix
-  ]; 
+  ];
 
   boot = {
     # Kernel
@@ -27,9 +19,7 @@
     kernelModules = [ "v4l2loopback" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
     # Needed For Some Steam Games
-    kernel.sysctl = {
-      "vm.max_map_count" = 2147483642;
-    };
+    kernel.sysctl = { "vm.max_map_count" = 2147483642; };
     # Bootloader.
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -44,8 +34,8 @@
       interpreter = "${pkgs.appimage-run}/bin/appimage-run";
       recognitionType = "magic";
       offset = 0;
-      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-      magicOrExtension = ''\x7fELF....AI\x02'';
+      mask = "\\xff\\xff\\xff\\xff\\x00\\x00\\x00\\x00\\xff\\xff\\xff";
+      magicOrExtension = "\\x7fELF....AI\\x02";
     };
     plymouth.enable = true;
   };
@@ -117,26 +107,26 @@
     hostName = host;
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
     extraHosts = ''
-    # Blocked Sites
-    # 127.0.0.1 youtube.com
-    # 127.0.0.1 www.youtube.com
-    # 127.0.0.1 m.youtube.com
-    # 127.0.0.1 twitch.tv
-    # 127.0.0.1 www.twitch.tv
-    # 127.0.0.1 instagram.com
-    # 127.0.0.1 www.instagram.com
-    # 127.0.0.1 reddit.com
-    # 127.0.0.1 www.reddit.com
-    # 127.0.0.1 old.reddit.com
-    127.0.0.1 twitter.com
-    127.0.0.1 x.com
-    127.0.0.1 tiktok.com
-    127.0.0.1 www.tiktok.com
-    127.0.0.1 facebook.com
-    127.0.0.1 www.facebook.com
-    127.0.0.1 pinterest.com
-    127.0.0.1 www.pinterest.com
-  '';
+      # Blocked Sites
+      # 127.0.0.1 youtube.com
+      # 127.0.0.1 www.youtube.com
+      # 127.0.0.1 m.youtube.com
+      # 127.0.0.1 twitch.tv
+      # 127.0.0.1 www.twitch.tv
+      # 127.0.0.1 instagram.com
+      # 127.0.0.1 www.instagram.com
+      # 127.0.0.1 reddit.com
+      # 127.0.0.1 www.reddit.com
+      # 127.0.0.1 old.reddit.com
+      127.0.0.1 twitter.com
+      127.0.0.1 x.com
+      127.0.0.1 tiktok.com
+      127.0.0.1 www.tiktok.com
+      127.0.0.1 facebook.com
+      127.0.0.1 www.facebook.com
+      127.0.0.1 pinterest.com
+      127.0.0.1 www.pinterest.com
+    '';
   };
 
   # Set your time zone.
@@ -158,74 +148,33 @@
   };
 
   programs = {
+    adb.enable = true;
     firefox.enable = true;
     starship = {
       enable = true;
       settings = {
         add_newline = false;
-        buf = {
-          symbol = " ";
-        };
-        c = {
-          symbol = " ";
-        };
-        directory = {
-          read_only = " 󰌾";
-        };
-        docker_context = {
-          symbol = " ";
-        };
-        fossil_branch = {
-          symbol = " ";
-        };
-        git_branch = {
-          symbol = " ";
-        };
-        golang = {
-          symbol = " ";
-        };
-        hg_branch = {
-          symbol = " ";
-        };
-        hostname = {
-          ssh_symbol = " ";
-        };
-        lua = {
-          symbol = " ";
-        };
-        memory_usage = {
-          symbol = "󰍛 ";
-        };
-        meson = {
-          symbol = "󰔷 ";
-        };
-        nim = {
-          symbol = "󰆥 ";
-        };
-        nix_shell = {
-          symbol = " ";
-        };
-        nodejs = {
-          symbol = " ";
-        };
-        ocaml = {
-          symbol = " ";
-        };
-        package = {
-          symbol = "󰏗 ";
-        };
-        python = {
-          symbol = " ";
-        };
-        rust = {
-          symbol = " ";
-        };
-        swift = {
-          symbol = " ";
-        };
-        zig = {
-          symbol = " ";
-        };
+        buf = { symbol = " "; };
+        c = { symbol = " "; };
+        directory = { read_only = " 󰌾"; };
+        docker_context = { symbol = " "; };
+        fossil_branch = { symbol = " "; };
+        git_branch = { symbol = " "; };
+        golang = { symbol = " "; };
+        hg_branch = { symbol = " "; };
+        hostname = { ssh_symbol = " "; };
+        lua = { symbol = " "; };
+        memory_usage = { symbol = "󰍛 "; };
+        meson = { symbol = "󰔷 "; };
+        nim = { symbol = "󰆥 "; };
+        nix_shell = { symbol = " "; };
+        nodejs = { symbol = " "; };
+        ocaml = { symbol = " "; };
+        package = { symbol = "󰏗 "; };
+        python = { symbol = " "; };
+        rust = { symbol = " "; };
+        swift = { symbol = " "; };
+        zig = { symbol = " "; };
       };
     };
     dconf.enable = true;
@@ -245,19 +194,14 @@
     };
     thunar = {
       enable = true;
-      plugins = with pkgs.xfce; [
-        thunar-archive-plugin
-        thunar-volman
-      ];
+      plugins = with pkgs.xfce; [ thunar-archive-plugin thunar-volman ];
     };
   };
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnsupportedSystem = true;
 
-  users = {
-    mutableUsers = true;
-  };
+  users = { mutableUsers = true; };
 
   environment.systemPackages = with pkgs; [
     vim
@@ -322,14 +266,14 @@
     # neovide
     greetd.tuigreet
     affine
-    go_1_22
+    go
     tesseract4
     cmake
     python313Full
-    corepack_22  # This is for building
-    gnumake42  # This is for building
-    bitwarden-cli  # This is the bitwarden cli that is a password manager
-    sox  # This is for audio editing
+    corepack_22 # This is for building
+    gnumake42 # This is for building
+    bitwarden-cli # This is the bitwarden cli that is a password manager
+    sox # This is for audio editing
     age
     distrobox
     aider-chat
@@ -358,14 +302,15 @@
     (pkgs.buildGoModule {
       pname = "gorun";
       version = "0.1.0";
-      
+
       src = pkgs.fetchFromGitHub {
         owner = "erning";
         repo = "gorun";
         rev = "master"; # You might want to pin to a specific commit
-        sha256 = "sha256-2Z5kz6w8k7Pa2U5/p3BZZC7rM6lRvbYnIVnYrcoCEyU="; # You'll need to replace this with the actual hash
+        sha256 =
+          "sha256-2Z5kz6w8k7Pa2U5/p3BZZC7rM6lRvbYnIVnYrcoCEyU="; # You'll need to replace this with the actual hash
       };
-      
+
       # If vendoring is not used, set this to the hash of the dependencies
       # You'll get an error with the correct hash to use
       vendorHash = null;
@@ -377,6 +322,9 @@
     code-cursor
     bash-completion
     direnv
+    android-tools
+    android-studio
+    bun
   ];
 
   fonts = {
@@ -401,10 +349,7 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal
-    ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal ];
     configPackages = [
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-hyprland
@@ -423,13 +368,13 @@
     udev = {
       packages = [ pkgs.yubikey-personalization pkgs.android-udev-rules ];
       extraRules = ''
-      ACTION=="remove",\
-       ENV{ID_BUS}=="usb",\
-       ENV{ID_MODEL_ID}=="0407",\
-       ENV{ID_VENDOR_ID}=="1050",\
-       ENV{ID_VENDOR}=="Yubico",\
-       RUN+="${pkgs.systemd}/bin/loginctl hyprlock"
-    '';
+        ACTION=="remove",\
+         ENV{ID_BUS}=="usb",\
+         ENV{ID_MODEL_ID}=="0407",\
+         ENV{ID_VENDOR_ID}=="1050",\
+         ENV{ID_VENDOR}=="Yubico",\
+         RUN+="${pkgs.systemd}/bin/loginctl hyprlock"
+      '';
     };
     xserver = {
       enable = false;
@@ -448,7 +393,8 @@
           # .wayland-session is a script generated by home-manager, which links to the current wayland compositor(sway/hyprland or others).
           # with such a vendor-no-locking script, we can switch to another wayland compositor without modifying greetd's config here.
           # command = "$HOME/.wayland-session"; # start a wayland session directly without a login manager
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
+          command =
+            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
         };
       };
     };
@@ -570,13 +516,14 @@
   nix = {
     settings = {
       auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
+      experimental-features = [ "nix-command" "flakes" ];
+      substituters =
+        [ "https://hyprland.cachix.org" "https://devenv.cachix.org" ];
+      trusted-public-keys = [
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
-      substituters = [ "https://hyprland.cachix.org" "https://devenv.cachix.org" ];
-      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=" ];
-      trusted-users = [ "root" "mr-jz"];
+      trusted-users = [ "root" "mr-jz" ];
     };
     gc = {
       automatic = true;
@@ -599,14 +546,15 @@
       setSocketVariable = true;
     };
   };
+  systemd.services.docker.serviceConfig = { LimitMEMLOCK = "infinity"; };
 
   # OpenGL
- # hardware.opengl = {
- #   enable = true;
- #   extraPackages = with pkgs; [
- #     rocmPackages.clr.icd
- #   ];
- # };
+  # hardware.opengl = {
+  #   enable = true;
+  #   extraPackages = with pkgs; [
+  #     rocmPackages.clr.icd
+  #   ];
+  # };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

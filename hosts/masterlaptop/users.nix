@@ -1,13 +1,7 @@
-{
-  pkgs,
-  username,
-  ...
-}:
+{ pkgs, username, ... }:
 
-let
-  inherit (import ./variables.nix) gitUsername;
-in
-{
+let inherit (import ./variables.nix) gitUsername;
+in {
   users.users = {
     "${username}" = {
       homeMode = "755";
@@ -22,11 +16,11 @@ in
         "docker"
         "uinput"
         "input"
+        "adbusers"
       ];
       shell = pkgs.bash;
       ignoreShellProgramCheck = true;
-      packages = with pkgs; [
-      ];
+      packages = with pkgs; [ ];
     };
     # "newuser" = {
     #   homeMode = "755";

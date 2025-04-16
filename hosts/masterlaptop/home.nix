@@ -1,14 +1,6 @@
-{
-  pkgs,
-  username,
-  host,
-  inputs,
-  ...
-}:
-let
-  inherit (import ./variables.nix) gitUsername gitEmail;
-in
-{
+{ pkgs, username, host, inputs, ... }:
+let inherit (import ./variables.nix) gitUsername gitEmail;
+in {
   # Home Manager Settings
   home.username = "${username}";
   home.homeDirectory = "/home/${username}";
@@ -130,19 +122,14 @@ in
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
     };
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
+    gtk3.extraConfig = { gtk-application-prefer-dark-theme = 1; };
+    gtk4.extraConfig = { gtk-application-prefer-dark-theme = 1; };
   };
   # qt = {
   #   enable = true;
   #   style.name = "adwaita-dark";
   #   platformTheme.name = "gtk3";
   # };
-
 
   # Scripts
   home.packages = [
@@ -194,7 +181,7 @@ in
     pkgs.julia
     pkgs.zulu21
     pkgs.libreoffice
-    pkgs.stylua  # Lua formatter
+    pkgs.stylua # Lua formatter
     pkgs.lua-language-server
     # pkgs.clang
     pkgs.zoxide
@@ -246,9 +233,7 @@ in
     gh.enable = true;
     btop = {
       enable = true;
-      settings = {
-        vim_keys = true;
-      };
+      settings = { vim_keys = true; };
     };
     kitty = {
       enable = true;
@@ -275,7 +260,7 @@ in
         "alt+e" = "send_key ctrl+b e";
         "alt+z" = "send_key ctrl+b z";
         "alt+f" = "send_key ctrl+b m";
-        "alt+'" = "send_key ctrl+b \"";
+        "alt+'" = ''send_key ctrl+b "'';
         # "alt+t" = "send_key ctrl+b %";
       };
       extraConfig = ''
@@ -305,135 +290,150 @@ in
         ssh-add ~/github/github_mr-jz
         source ~/.cache/api_keys
         export DIRENV_LOG_FORMAT=""
+        export PATH="/home/mr-jz/.bun/bin:$PATH"
       '';
       initExtra = ''
         source ~/.gcloudrc
       '';
       shellAliases = {
-        ai = "aider --model gemini/gemini-1.5-pro-latest --dark-mode --auto-commits $(find . -type f | fzf --multi | tr '\n' ' ')";
+        ai = ''
+          aider --model gemini/gemini-1.5-pro-latest --dark-mode --auto-commits $(find . -type f | fzf --multi | tr '
+          ' ' ')'';
         sv = "sudo nvim";
         fr = "nh os switch --hostname ${host} /home/${username}/zaneyos";
-        fu = "nh os switch --hostname ${host} --update /home/${username}/zaneyos";
-        zu = "sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh)";
-        ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+        fu =
+          "nh os switch --hostname ${host} --update /home/${username}/zaneyos";
+        zu =
+          "sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh)";
+        ncg =
+          "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
         v = "nvim";
         cat = "bat";
         ls = "eza --icons";
         ll = "eza -lh --icons --grid --group-directories-first";
         la = "eza -lah --icons --grid --group-directories-first";
-        ghc="repo=$(gh repo list | fzf | awk '{print $1}'); if [ ! -z \"$repo\" ]; then if gh api repos/$repo/contents/package.json --silent >/dev/null 2>&1; then echo \"📦 Found package.json, doing normal clone...\" && gh repo clone $repo; else echo \"🗃️ No package.json, doing bare clone...\" && gh repo clone $repo -- --bare; fi; fi";
-        ghc-c="ghc clone $(gh repo list | fzf | awk '{print $1}')";
-        get-branch="git branch --show-current | sed 's/feature\\///' | wl-copy; echo 'copied the branch name'";
-        git-hash-copy="printf %s \"$(git rev-parse HEAD)\" | wl-copy";
-        z="zoxide";
-        ghd="gh dash";
+        ghc = ''
+          repo=$(gh repo list | fzf | awk '{print $1}'); if [ ! -z "$repo" ]; then if gh api repos/$repo/contents/package.json --silent >/dev/null 2>&1; then echo "📦 Found package.json, doing normal clone..." && gh repo clone $repo; else echo "🗃️ No package.json, doing bare clone..." && gh repo clone $repo -- --bare; fi; fi'';
+        ghc-c = "ghc clone $(gh repo list | fzf | awk '{print $1}')";
+        get-branch =
+          "git branch --show-current | sed 's/feature\\///' | wl-copy; echo 'copied the branch name'";
+        git-hash-copy = ''printf %s "$(git rev-parse HEAD)" | wl-copy'';
+        z = "zoxide";
+        ghd = "gh dash";
         s = "sesh connect $(sesh list | fzf --height 24)";
         ".." = "cd ..";
-        sw = "find ~/Pictures/Wallpapers ~/Pictures/Background -type f \\( -iname \"*.jpg\" -o -iname \"*.png\" -o -iname \"*.jpeg\" \\) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}";
+        sw = ''
+          find ~/Pictures/Wallpapers ~/Pictures/Background -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}'';
         ro = "cd $(git rev-parse --show-toplevel)";
-        gs = "git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview \"git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \\$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\")";
+        gs = ''
+          git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview "git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')" | sed "s/.* //" | sed "s#remotes/[^/]*/##")'';
       };
     };
     nushell = {
-          enable = false;
-          extraConfig = ''
-            $env.config = {
-              show_banner: false
-              completions: {
-                case_sensitive: false
-                quick: true
-                partial: true
-                algorithm: "fuzzy"
-                external: {
-                  enable: true
-                  max_results: 100
-                  completer: $carapace_completer
+      enable = false;
+      extraConfig = ''
+        $env.config = {
+          show_banner: false
+          completions: {
+            case_sensitive: false
+            quick: true
+            partial: true
+            algorithm: "fuzzy"
+            external: {
+              enable: true
+              max_results: 100
+              completer: $carapace_completer
+            }
+          }
+        }
+
+        # Initialize zoxide
+        zoxide init nushell | save -f ~/.zoxide.nu
+        source ~/.zoxide.nu
+
+        # Start SSH agent and add key
+        def setup_ssh_agent [] {
+            # Ensure SSH directory exists with correct permissions
+            ^mkdir -p ~/.ssh
+            ^chmod 700 ~/.ssh
+
+            # Ensure GitHub key directory exists
+            ^mkdir -p ~/github
+
+            # Kill any existing ssh-agent processes
+            ps | where name == 'ssh-agent' | each { |p| kill $p.pid }
+
+            # Start new ssh-agent
+            let ssh_output = (^ssh-agent -c | lines)
+            
+            # Parse and load SSH environment variables
+            let ssh_env = ($ssh_output 
+                | first 2 
+                | parse "setenv {name} {value};" 
+                | transpose --header-row 
+                | into record)
+            
+            # Load the SSH environment variables
+            load-env $ssh_env
+
+            # Add SSH key if it exists
+            let ssh_key = ($env.HOME + "/github/github_mr-jz")
+            if ($ssh_key | path exists) {
+                # Set correct permissions for the key
+                ^chmod 600 $ssh_key
+                try {
+                    ^ssh-add $ssh_key
+                    # Test GitHub SSH connection
+                    ^ssh -T git@github.com -o StrictHostKeyChecking=no
+                } catch {
+                    print $"Failed to add SSH key: ($env.LAST_ERROR)"
                 }
-              }
+            } else {
+                print $"SSH key not found at ($ssh_key)"
             }
+        }
 
-            # Initialize zoxide
-            zoxide init nushell | save -f ~/.zoxide.nu
-            source ~/.zoxide.nu
+        # Run SSH agent setup
+        setup_ssh_agent
 
-            # Start SSH agent and add key
-            def setup_ssh_agent [] {
-                # Ensure SSH directory exists with correct permissions
-                ^mkdir -p ~/.ssh
-                ^chmod 700 ~/.ssh
+        # Add Go binaries to PATH
+        $env.PATH = ($env.PATH | append ($env.HOME + "/go/bin"))
 
-                # Ensure GitHub key directory exists
-                ^mkdir -p ~/github
-
-                # Kill any existing ssh-agent processes
-                ps | where name == 'ssh-agent' | each { |p| kill $p.pid }
-
-                # Start new ssh-agent
-                let ssh_output = (^ssh-agent -c | lines)
-                
-                # Parse and load SSH environment variables
-                let ssh_env = ($ssh_output 
-                    | first 2 
-                    | parse "setenv {name} {value};" 
-                    | transpose --header-row 
-                    | into record)
-                
-                # Load the SSH environment variables
-                load-env $ssh_env
-
-                # Add SSH key if it exists
-                let ssh_key = ($env.HOME + "/github/github_mr-jz")
-                if ($ssh_key | path exists) {
-                    # Set correct permissions for the key
-                    ^chmod 600 $ssh_key
-                    try {
-                        ^ssh-add $ssh_key
-                        # Test GitHub SSH connection
-                        ^ssh -T git@github.com -o StrictHostKeyChecking=no
-                    } catch {
-                        print $"Failed to add SSH key: ($env.LAST_ERROR)"
-                    }
-                } else {
-                    print $"SSH key not found at ($ssh_key)"
-                }
-            }
-
-            # Run SSH agent setup
-            setup_ssh_agent
-
-            # Add Go binaries to PATH
-            $env.PATH = ($env.PATH | append ($env.HOME + "/go/bin"))
-
-            # Check if flake.nix with nix shell is in the folder and run it
-            if ("flake.nix" | path exists) and (open flake.nix | str contains "devShells") {
-              ^nix develop
-            }
-          '';
-          shellAliases = {
-            vi = "nvim";
-            vim = "nvim";
-            nano = "nvim";
-            sv = "sudo nvim";
-            fr = "do { nh os switch --hostname ${host} /home/${username}/zaneyos }";
-            fu = "do { nh os switch --hostname ${host} --update /home/${username}/zaneyos }";
-            zu = "do { curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh | sh }";
-            ncg = "do { nix-collect-garbage --delete-old; sudo nix-collect-garbage -d; sudo /run/current-system/bin/switch-to-configuration boot }";
-            v = "nvim";
-            cat = "bat";
-            ghc = "do { gh repo clone (gh repo list | fzf | split row --regex '\\s+' | get 0) -- --bare }";
-            git-hash-copy = "do { git rev-parse HEAD | save --raw | pbcopy }";
-            z = "zoxide";
-            ghd = "gh dash";
-            s = "do { sesh connect (sesh list | fzf --height 24) }";
-            ".." = "cd ..";
-          };
-        };
+        # Check if flake.nix with nix shell is in the folder and run it
+        if ("flake.nix" | path exists) and (open flake.nix | str contains "devShells") {
+          ^nix develop
+        }
+      '';
+      shellAliases = {
+        vi = "nvim";
+        vim = "nvim";
+        nano = "nvim";
+        sv = "sudo nvim";
+        fr = "do { nh os switch --hostname ${host} /home/${username}/zaneyos }";
+        fu =
+          "do { nh os switch --hostname ${host} --update /home/${username}/zaneyos }";
+        zu =
+          "do { curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh | sh }";
+        ncg =
+          "do { nix-collect-garbage --delete-old; sudo nix-collect-garbage -d; sudo /run/current-system/bin/switch-to-configuration boot }";
+        v = "nvim";
+        cat = "bat";
+        ghc =
+          "do { gh repo clone (gh repo list | fzf | split row --regex '\\s+' | get 0) -- --bare }";
+        git-hash-copy = "do { git rev-parse HEAD | save --raw | pbcopy }";
+        z = "zoxide";
+        ghd = "gh dash";
+        s = "do { sesh connect (sesh list | fzf --height 24) }";
+        ".." = "cd ..";
+      };
+    };
     carapace.enable = true;
 
-    starship = { enable = true;
-        settings = {
-          add_newline = true;
-          character = { 
+    starship = {
+      enable = true;
+      settings = {
+        add_newline = true;
+        character = {
           success_symbol = "[➜](bold green)";
           error_symbol = "[➜](bold red)";
         };
@@ -442,8 +442,7 @@ in
     home-manager.enable = true;
     hyprlock = {
       enable = true;
-      settings = let
-        lib = pkgs.lib;
+      settings = let lib = pkgs.lib;
       in {
         general = {
           disable_loading_bar = true;
@@ -451,40 +450,34 @@ in
           hide_cursor = true;
           no_fade_in = false;
         };
-        background = lib.mkForce [
-          {
-            path = "/home/${username}/Pictures/Wallpapers/mountainscapedark.jpg";
-            blur_passes = 3;
-            blur_size = 8;
-          }
-        ];
-        image = [
-          {
-            path = "/home/${username}/.config/face.jpg";
-            size = 150;
-            border_size = 4;
-            border_color = "rgb(0C96F9)";
-            rounding = -1; # Negative means circle
-            position = "0, 200";
-            halign = "center";
-            valign = "center";
-          }
-        ];
-        input-field = lib.mkForce [
-          {
-            size = "200, 50";
-            position = "0, -80";
-            monitor = "";
-            dots_center = true;
-            fade_on_empty = false;
-            font_color = "rgb(CFE6F4)";
-            inner_color = "rgb(657DC2)";
-            outer_color = "rgb(0D0E15)";
-            outline_thickness = 5;
-            placeholder_text = "Password...";
-            shadow_passes = 2;
-          }
-        ];
+        background = lib.mkForce [{
+          path = "/home/${username}/Pictures/Wallpapers/mountainscapedark.jpg";
+          blur_passes = 3;
+          blur_size = 8;
+        }];
+        image = [{
+          path = "/home/${username}/.config/face.jpg";
+          size = 150;
+          border_size = 4;
+          border_color = "rgb(0C96F9)";
+          rounding = -1; # Negative means circle
+          position = "0, 200";
+          halign = "center";
+          valign = "center";
+        }];
+        input-field = lib.mkForce [{
+          size = "200, 50";
+          position = "0, -80";
+          monitor = "";
+          dots_center = true;
+          fade_on_empty = false;
+          font_color = "rgb(CFE6F4)";
+          inner_color = "rgb(657DC2)";
+          outer_color = "rgb(0D0E15)";
+          outline_thickness = 5;
+          placeholder_text = "Password...";
+          shadow_passes = 2;
+        }];
       };
     };
   };
