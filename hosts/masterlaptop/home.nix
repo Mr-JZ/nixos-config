@@ -136,6 +136,7 @@ in {
     (import ../../scripts/emopicker9000.nix { inherit pkgs; })
     (import ../../scripts/play-random-meditation.nix { inherit pkgs; })
     (import ../../scripts/ai-spellcheck.nix { inherit pkgs; })
+    (import ../../scripts/podman-vm-cli.nix { inherit pkgs; })
     (import ../../scripts/42-make-local.nix { inherit pkgs; })
     (import ../../scripts/recording-window.nix { inherit pkgs; })
     (import ../../scripts/ai-en-translate.nix { inherit pkgs; })
@@ -327,6 +328,9 @@ in {
         ro = "cd $(git rev-parse --show-toplevel)";
         gs = ''
           git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview "git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')" | sed "s/.* //" | sed "s#remotes/[^/]*/##")'';
+        cp-cursor-rules =
+          "find ~/github/awesome-cursorrules -type d | fzf --preview 'ls -l {}' --bind 'enter:execute(mkdir -p \"$(pwd)/.cursor/rules/\" && cp -v {}/*.mdc \"$(pwd)/.cursor/rules/\" && cd \"$(pwd)/.cursor/rules/\" ; kill -15 $(pgrep -n fzf) )'";
+        ds = "podman-vm-cli";
       };
     };
     nushell = {
