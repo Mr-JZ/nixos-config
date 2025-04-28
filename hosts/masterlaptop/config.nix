@@ -325,6 +325,7 @@
     android-tools
     android-studio
     bun
+    lima
   ];
 
   fonts = {
