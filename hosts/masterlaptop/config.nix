@@ -322,8 +322,6 @@
     code-cursor
     bash-completion
     direnv
-    android-tools
-    android-studio
     bun
     lima
   ];

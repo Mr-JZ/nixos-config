@@ -30,6 +30,12 @@ in with lib; {
       exec-once = nm-applet --indicator
       exec-once = lxqt-policykit-agent
       exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Cyborg/cyborg.jpg
+
+      # Autostart applications
+      exec-once = kitty
+      exec-once = [workspace 2 silent] obsidian
+      exec-once = [workspace special silent] google-chrome
+      exec-once = insync
       # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/City/253646.jpg
       monitor=,preferred,auto,1
       ${extraMonitorSettings}
@@ -89,6 +95,15 @@ in with lib; {
       windowrule = pin, initialTitle:Edit Item
       windowrule = move 650 405, initialTitle:Edit Item
       windowrule = size 1140 820, initialTitle:Edit Item
+
+      # Workspace assignments for specific applications
+      windowrule = workspace 1, class:kitty
+      windowrule = workspace 2, class:obsidian
+      windowrule = workspace 3, class:cursor
+      windowrule = workspace 4, class:firefox
+      windowrule = workspace 6, class:spotify
+      windowrule = workspace 7, class:Slack
+      windowrule = workspace special, class:google-chrome
       gestures {
         workspace_swipe = true
         workspace_swipe_fingers = 3

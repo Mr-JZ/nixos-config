@@ -331,6 +331,7 @@ in {
         cp-cursor-rules =
           "find ~/github/awesome-cursorrules -type d | fzf --preview 'ls -l {}' --bind 'enter:execute(mkdir -p \"$(pwd)/.cursor/rules/\" && cp -v {}/*.mdc \"$(pwd)/.cursor/rules/\" && cd \"$(pwd)/.cursor/rules/\" ; kill -15 $(pgrep -n fzf) )'";
         ds = "podman-vm-cli";
+        gps = "git push --force-with-lease";
       };
     };
     nushell = {
