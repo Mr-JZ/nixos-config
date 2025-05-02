@@ -324,6 +324,8 @@
     direnv
     bun
     lima
+    imagemagick
+    uv
   ];
 
   fonts = {
