@@ -78,10 +78,10 @@ in with lib; {
       windowrule = move 1640 1050, title:Picture-in-Picture
       windowrule = pin, title:Picture-in-Picture
       windowrule = float, title:Picture-in-Picture
-      windowrule = float, title:^Meet – [a-z]{3}-[a-z]{4}-[a-z]{3}$
-      windowrule = move 840 -3, title:^Meet – [a-z]{3}-[a-z]{4}-[a-z]{3}$
-      windowrule = size 830 520, title:^Meet – [a-z]{3}-[a-z]{4}-[a-z]{3}$
-      windowrule = pin, title:^Meet – [a-z]{3}-[a-z]{4}-[a-z]{3}$
+      windowrule = float, title:^Meet – ([a-z]{3}-[a-z]{4}-[a-z]{3}|Call with .*)$
+      windowrule = move 840 -3, title:^Meet – ([a-z]{3}-[a-z]{4}-[a-z]{3}|Call with .*)$
+      windowrule = size 830 520, title:^Meet – ([a-z]{3}-[a-z]{4}-[a-z]{3}|Call with .*)$
+      windowrule = pin, title:^Meet – ([a-z]{3}-[a-z]{4}-[a-z]{3}|Call with .*)$
       windowrule = float, class:flameshot
       windowrule = float, title:YAD
       windowrule = pin, title:YAD
