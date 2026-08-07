@@ -10,10 +10,7 @@ in {
       extraGroups = [
         "networkmanager"
         "wheel"
-        "libvirtd"
         "scanner"
-        "lp"
-        "docker"
         "uinput"
         "input"
         "adbusers"

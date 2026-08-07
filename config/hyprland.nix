@@ -6,6 +6,7 @@ let
 in with lib; {
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
     xwayland.enable = true;
     systemd.enable = true;
     extraConfig = let modifier = "SUPER";
@@ -24,19 +25,19 @@ in with lib; {
       env = MOZ_ENABLE_WAYLAND, 1
       exec-once = dbus-update-activation-environment --systemd --all
       exec-once = systemctl --user import-environment QT_QPA_PLATFORMTHEME WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-      exec-once = killall -q swww;sleep .5 && swww init
+      exec-once = killall -q awww-daemon;sleep .5 && awww-daemon
       exec-once = killall -q waybar;sleep .5 && waybar
       exec-once = killall -q swaync;sleep .5 && swaync
       exec-once = nm-applet --indicator
       exec-once = lxqt-policykit-agent
-      exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Cyborg/cyborg.jpg
+      exec-once = sleep 1.5 && awww img /home/${username}/Pictures/Background/Cyborg/cyborg.jpg
 
       # Autostart applications
       exec-once = kitty
       exec-once = [workspace 2 silent] obsidian
       exec-once = [workspace special silent] google-chrome
-      exec-once = insync
-      # exec-once = sleep 1.5 && swww img /home/${username}/Pictures/Background/Pictures/Background/City/253646.jpg
+      exec-once = insync start
+      # exec-once = sleep 1.5 && awww img /home/${username}/Pictures/Background/Pictures/Background/City/253646.jpg
       monitor=,preferred,auto,1
       ${extraMonitorSettings}
       general {
@@ -96,10 +97,12 @@ in with lib; {
       windowrule = move 650 405, initialTitle:Edit Item
       windowrule = size 1140 820, initialTitle:Edit Item
 
+      windowrule = pin, title:zoom_linux_float_video_window
+      windowrule = pin, title:as_toolbar
       # Workspace assignments for specific applications
       windowrule = workspace 1, class:kitty
       windowrule = workspace 2, class:obsidian
-      windowrule = workspace 3, class:cursor
+      windowrule = workspace 3, class:^(?i)Cursor$
       windowrule = workspace 4, class:firefox
       windowrule = workspace 6, class:spotify
       windowrule = workspace 7, class:Slack
@@ -223,10 +226,10 @@ in with lib; {
       bind = ,XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
       bind = ,XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
       binde = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-      bind = ,XF86AudioPlay, exec, playerctl -p spotify play-pause
-      bind = ,XF86AudioPause, exec, playerctl -p spotify play-pause
-      bind = ,XF86AudioNext, exec, playerctl -p spotify next
-      bind = ,XF86AudioPrev, exec, playerctl -p spotify previous
+      bind = ,XF86AudioPlay, exec, playerctl play-pause
+      bind = ,XF86AudioPause, exec, playerctl play-pause
+      bind = ,XF86AudioNext, exec, playerctl next
+      bind = ,XF86AudioPrev, exec, playerctl previous
       bind = ,XF86MonBrightnessDown,exec,brightnessctl set 5%-
       bind = ,XF86MonBrightnessUp,exec,brightnessctl set +5%
     ''];

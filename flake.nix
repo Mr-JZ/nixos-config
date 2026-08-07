@@ -7,6 +7,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
     agenix.url = "github:ryantm/agenix";
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     fine-cmdline = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
       flake = false;

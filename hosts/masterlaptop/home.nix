@@ -50,8 +50,10 @@ in {
   # Install & Configure Git
   programs.git = {
     enable = true;
-    userName = "${gitUsername}";
-    userEmail = "${gitEmail}";
+    settings.user = {
+      name = gitUsername;
+      email = gitEmail;
+    };
 
     ignores = [
       ".csvignore"
@@ -65,6 +67,8 @@ in {
       # direnv
       ".direnv"
       ".aider*"
+      # mprocs
+      "mprocs.yaml"
     ];
 
     includes = [
@@ -103,13 +107,7 @@ in {
     userDirs = {
       enable = true;
       createDirectories = true;
-    };
-  };
-
-  dconf.settings = {
-    "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      setSessionVariables = true;
     };
   };
 
@@ -188,19 +186,13 @@ in {
     pkgs.zoxide
     pkgs.obsidian
     # BA
-    pkgs.zathura
-    pkgs.zotero_7
-    pkgs.plantuml
-    pkgs.texliveFull
+    # pkgs.zathura
+    # pkgs.zotero_7
+    # pkgs.plantuml
     # Devolopment
     pkgs.devpod
-    pkgs.vscode
-    pkgs.ticktick
-    pkgs.jellyfin-media-player
-    pkgs.zoom-us
+    # pkgs.vscode
     pkgs.slack
-    pkgs.gum
-    pkgs.bc
   ];
 
   services = {
@@ -292,6 +284,8 @@ in {
         source ~/.cache/api_keys
         export DIRENV_LOG_FORMAT=""
         export PATH="/home/mr-jz/.bun/bin:$PATH"
+
+        export MANPAGER='nvim +Man!'
       '';
       initExtra = ''
         source ~/.gcloudrc
@@ -324,7 +318,7 @@ in {
         s = "sesh connect $(sesh list | fzf --height 24)";
         ".." = "cd ..";
         sw = ''
-          find ~/Pictures/Wallpapers ~/Pictures/Background -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | fzf --preview 'kitten icat {}' | xargs -r -I {} swww img {}'';
+          find ~/Pictures/Wallpapers ~/Pictures/Background -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | fzf --preview 'kitten icat {}' | xargs -r -I {} awww img {}'';
         ro = "cd $(git rev-parse --show-toplevel)";
         gs = ''
           git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview "git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')" | sed "s/.* //" | sed "s#remotes/[^/]*/##")'';

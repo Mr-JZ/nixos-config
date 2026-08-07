@@ -14,12 +14,9 @@
 
   boot = {
     # Kernel
-    kernelPackages = pkgs.linuxPackages_zen;
-    # This is for OBS Virtual Cam Support
-    kernelModules = [ "v4l2loopback" ];
-    extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
-    # Needed For Some Steam Games
-    kernel.sysctl = { "vm.max_map_count" = 2147483642; };
+    kernelPackages = pkgs.linuxPackages;
+    # Let amd-pstate automatically favor efficiency on battery and performance on AC.
+    kernelParams = [ "amd_dynamic_epp=enable" ];
     # Bootloader.
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -148,7 +145,6 @@
   };
 
   programs = {
-    adb.enable = true;
     firefox.enable = true;
     starship = {
       enable = true;
@@ -185,7 +181,6 @@
       enable = true;
       enableSSHSupport = true;
     };
-    virt-manager.enable = true;
     steam = {
       enable = true;
       gamescopeSession.enable = true;
@@ -194,16 +189,20 @@
     };
     thunar = {
       enable = true;
-      plugins = with pkgs.xfce; [ thunar-archive-plugin thunar-volman ];
+      plugins = with pkgs; [ thunar-archive-plugin thunar-volman ];
     };
   };
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowUnsupportedSystem = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowUnsupportedSystem = true;
+    allowBroken = true;
+  };
 
   users = { mutableUsers = true; };
 
   environment.systemPackages = with pkgs; [
+    inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
     vim
     wget
     killall
@@ -213,9 +212,7 @@
     lolcat
     fastfetch
     htop
-    brave
     google-chrome
-    libvirt
     lxqt.lxqt-policykit
     lm_sensors
     unzip
@@ -249,53 +246,43 @@
     inxi
     playerctl
     nh
-    nixfmt-rfc-style
+    nixfmt
     discord
-    libvirt
-    swww
+    awww
     grim
     slurp
     pkgs.file-roller
     swaynotificationcenter
     imv
     mpv
-    # gimp
     pavucontrol
     tree
     spotify
-    # neovide
-    greetd.tuigreet
-    affine
+    tuigreet
     go
     tesseract4
     cmake
-    python313Full
+    python313
+    qmk
     corepack_22 # This is for building
     gnumake42 # This is for building
     bitwarden-cli # This is the bitwarden cli that is a password manager
     sox # This is for audio editing
     age
     distrobox
-    aider-chat
     yubioath-flutter
     nautilus
     wakatime-cli
     via
-    python313Packages.playwright
-    python313Packages.pydantic
     uair
     yq
     toipe
     insync
     insync-nautilus
-    thunderbird
     jq
-    ausweisapp
     inkscape
-    todoist-electron
     hyprland-qtutils
     devenv
-    direnv
     # wl-screenrec
     lf
     nodejs
@@ -316,16 +303,31 @@
       vendorHash = null;
     })
     mongodb-compass
-    teams-for-linux
     glab
     mongosh
     code-cursor
     bash-completion
     direnv
     bun
-    lima
     imagemagick
+    lua51Packages.rocks-nvim
+    lua51Packages.magick
     uv
+    prettierd
+    tealdeer
+    wikiman
+    deno
+    mercurialFull
+    ueberzugpp
+    chafa
+    viu
+    zathura
+    zoom-us
+    ncspot
+    wiki-tui
+    mprocs
+    openssl
+    thunderbird
   ];
 
   fonts = {
@@ -360,6 +362,7 @@
 
   # Services to start
   services = {
+    power-profiles-daemon.enable = true;
     kanata = {
       enable = true;
       keyboards.default.configFile = ../../config/kanata/default.kbd;
@@ -367,7 +370,7 @@
     pcscd.enable = true; # Enable pcscd for smartcards (yubikey)
     yubikey-agent.enable = true;
     udev = {
-      packages = [ pkgs.yubikey-personalization pkgs.android-udev-rules ];
+      packages = [ pkgs.yubikey-personalization ];
       extraRules = ''
         ACTION=="remove",\
          ENV{ID_BUS}=="usb",\
@@ -386,7 +389,6 @@
     };
     greetd = {
       enable = true;
-      vt = 3;
       settings = {
         default_session = {
           # Wayland Desktop Manager is installed only for user ryan via home-manager!
@@ -395,7 +397,7 @@
           # with such a vendor-no-locking script, we can switch to another wayland compositor without modifying greetd's config here.
           # command = "$HOME/.wayland-session"; # start a wayland session directly without a login manager
           command =
-            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
+            "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland"; # start Hyprland with a TUI login manager
         };
       };
     };
@@ -406,21 +408,7 @@
     libinput.enable = true;
     fstrim.enable = true;
     gvfs.enable = true;
-    openssh.enable = true;
-    flatpak.enable = true;
-    printing = {
-      enable = true;
-      drivers = [
-        # pkgs.hplipWithPlugin 
-      ];
-    };
     gnome.gnome-keyring.enable = true;
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
-    };
-    ipp-usb.enable = true;
     syncthing = {
       enable = false;
       user = "${username}";
@@ -436,12 +424,6 @@
     rpcbind.enable = false;
     nfs.server.enable = false;
   };
-  systemd.services.flatpak-repo = {
-    path = [ pkgs.flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-    '';
-  };
   hardware.sane = {
     enable = true;
     extraBackends = [ pkgs.sane-airscan ];
@@ -454,8 +436,16 @@
 
   # Bluetooth Support
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth.powerOnBoot = false;
   services.blueman.enable = true;
+
+  # Prefer compressed RAM swap before falling back to the disk swap partition.
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;
+    priority = 100;
+  };
 
   hardware.opentabletdriver = {
     enable = true;
@@ -532,22 +522,6 @@
       options = "--delete-older-than 7d";
     };
   };
-
-  # Virtualization / Containers
-  virtualisation.libvirtd.enable = true;
-  virtualisation.podman = {
-    enable = true;
-    defaultNetwork.settings.dns_enabled = true;
-  };
-
-  virtualisation.docker = {
-    enable = true;
-    rootless = {
-      enable = true;
-      setSocketVariable = true;
-    };
-  };
-  systemd.services.docker.serviceConfig = { LimitMEMLOCK = "infinity"; };
 
   # OpenGL
   # hardware.opengl = {

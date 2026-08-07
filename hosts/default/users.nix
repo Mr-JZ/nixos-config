@@ -8,7 +8,6 @@ let
   inherit (import ./variables.nix) gitUsername;
 in
 {
-  programs.adb.enable = true;
   users.users = {
     "${username}" = {
       homeMode = "755";
@@ -21,11 +20,11 @@ in
         "scanner"
         "lp"
         "kvm"
-        "adbusers"
       ];
       shell = pkgs.nushell;
       ignoreShellProgramCheck = true;
       packages = with pkgs; [
+        android-tools
       ];
     };
     # "newuser" = {
