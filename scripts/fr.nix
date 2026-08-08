@@ -19,10 +19,7 @@ pkgs.writeShellApplication {
     after_services="$(${pkgs.coreutils}/bin/mktemp)"
     started_at="$(${pkgs.coreutils}/bin/date --iso-8601=seconds)"
 
-    cleanup() {
-      rm -f "$before_services" "$after_services"
-    }
-    trap cleanup EXIT
+    trap 'rm -f "$before_services" "$after_services"' EXIT
 
     systemctl list-units --type=service --state=active --no-legend --plain \
       | ${pkgs.coreutils}/bin/cut -d ' ' -f 1 \
