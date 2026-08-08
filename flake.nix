@@ -10,7 +10,6 @@
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     handy = {
       url = "github:cjpais/Handy/v0.9.4";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     fine-cmdline = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
