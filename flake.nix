@@ -8,6 +8,10 @@
     stylix.url = "github:danth/stylix";
     agenix.url = "github:ryantm/agenix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    handy = {
+      url = "github:cjpais/Handy/v0.9.4";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     fine-cmdline = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
       flake = false;
@@ -38,6 +42,7 @@
           };
           modules = [
             ./hosts/${host}/config.nix
+            inputs.handy.nixosModules.default
             inputs.stylix.nixosModules.stylix
             home-manager.nixosModules.home-manager
             {

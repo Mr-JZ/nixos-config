@@ -8,6 +8,7 @@ in {
 
   # Import Program Configurations
   imports = [
+    inputs.handy.homeManagerModules.default
     ../../config/emoji.nix
     ../../config/hyprland.nix
     ../../config/neovim.nix
@@ -197,6 +198,7 @@ in {
   ];
 
   services = {
+    handy.enable = true;
     hypridle = {
       settings = {
         general = {

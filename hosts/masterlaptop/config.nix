@@ -153,6 +153,7 @@
   };
 
   programs = {
+    handy.enable = true;
     firefox.enable = true;
     starship = {
       enable = true;
@@ -275,6 +276,7 @@
     libnotify
     v4l-utils
     ydotool
+    wtype
     duf
     ncdu
     wl-clipboard
