@@ -131,6 +131,7 @@ in {
 
   # Scripts
   home.packages = [
+    (import ../../scripts/fr.nix { inherit pkgs host username; })
     (import ../../scripts/emopicker9000.nix { inherit pkgs; })
     (import ../../scripts/play-random-meditation.nix { inherit pkgs; })
     (import ../../scripts/ai-spellcheck.nix { inherit pkgs; })
@@ -295,7 +296,6 @@ in {
           aider --model gemini/gemini-1.5-pro-latest --dark-mode --auto-commits $(find . -type f | fzf --multi | tr '
           ' ' ')'';
         sv = "sudo nvim";
-        fr = "nh os switch --hostname ${host} /home/${username}/zaneyos";
         fu =
           "nh os switch --hostname ${host} --update /home/${username}/zaneyos";
         zu =
@@ -408,7 +408,6 @@ in {
         vim = "nvim";
         nano = "nvim";
         sv = "sudo nvim";
-        fr = "do { nh os switch --hostname ${host} /home/${username}/zaneyos }";
         fu =
           "do { nh os switch --hostname ${host} --update /home/${username}/zaneyos }";
         zu =
