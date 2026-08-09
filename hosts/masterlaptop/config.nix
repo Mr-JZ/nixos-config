@@ -48,6 +48,15 @@
     plymouth.enable = true;
   };
 
+  # Laptop power policy: suspend when the lid is closed, but keep running when
+  # docked so an external monitor can continue to be used with the lid shut.
+  powerManagement.enable = true;
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "ignore";
+  };
+
   # Styling Options
   stylix = {
     enable = true;
