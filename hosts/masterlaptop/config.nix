@@ -120,7 +120,10 @@
 
   # Enable networking
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      wifi.powersave = true;
+    };
     hostName = host;
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
     extraHosts = ''
