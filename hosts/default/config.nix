@@ -17,6 +17,8 @@
     ../../modules/intel-drivers.nix
     ../../modules/vm-guest-services.nix
     ../../modules/local-hardware-clock.nix
+    ../../modules/core/nix-settings.nix
+    ../../modules/core/workstation-security.nix
   ];
 
   boot = {
@@ -216,8 +218,8 @@
     steam = {
       enable = true;
       gamescopeSession.enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
+      remotePlay.openFirewall = false;
+      dedicatedServer.openFirewall = false;
     };
     thunar = {
       enable = true;
@@ -417,47 +419,10 @@
   sound.enable = true;
   hardware.pulseaudio.enable = false;
 
-  # Security / Polkit
-  security.rtkit.enable = true;
-  security.polkit.enable = true;
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      if (
-        subject.isInGroup("users")
-          && (
-            action.id == "org.freedesktop.login1.reboot" ||
-            action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.power-off" ||
-            action.id == "org.freedesktop.login1.power-off-multiple-sessions"
-          )
-        )
-      {
-        return polkit.Result.YES;
-      }
-    })
-  '';
   security.pam.services.swaylock = {
     text = ''
       auth include login
     '';
-  };
-
-  # Optimization settings and garbage collection automation
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      substituters = [ "https://hyprland.cachix.org" ];
-      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
-    };
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
   };
 
   # Virtualization / Containers

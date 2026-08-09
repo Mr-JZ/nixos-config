@@ -1,6 +1,8 @@
 { username, ... }:
 
 {
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
   age.secrets = {
     api-keys = {
       file = ../secrets/api-keys.age;

@@ -9,7 +9,7 @@
     agenix.url = "github:ryantm/agenix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     handy = {
-      url = "github:cjpais/Handy/v0.9.4";
+      url = "github:cjpais/Handy/v0.9.5";
     };
     fine-cmdline = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
@@ -43,6 +43,7 @@
             ./hosts/${host}/config.nix
             inputs.handy.nixosModules.default
             inputs.stylix.nixosModules.stylix
+            inputs.agenix.nixosModules.default
             home-manager.nixosModules.home-manager
             {
               home-manager.extraSpecialArgs = {

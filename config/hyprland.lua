@@ -4,7 +4,6 @@ local browser = "@BROWSER@"
 
 -- Environment
 hl.env("NIXOS_OZONE_WL", "1")
-hl.env("NIXPKGS_ALLOW_UNFREE", "1")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
@@ -13,7 +12,6 @@ hl.env("CLUTTER_BACKEND", "wayland")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
-hl.env("SDL_VIDEODRIVER", "x11")
 hl.env("MOZ_ENABLE_WAYLAND", "1")
 
 -- Monitor defaults
@@ -158,6 +156,16 @@ hl.window_rule({
 })
 hl.window_rule({ name = "zoom-video", match = { title = "zoom_linux_float_video_window" }, pin = true })
 hl.window_rule({ name = "zoom-toolbar", match = { title = "as_toolbar" }, pin = true })
+hl.window_rule({
+	name = "handy-recording-overlay",
+	match = { title = "^Recording$" },
+	float = true,
+	pin = true,
+	no_focus = true,
+	move = { "(monitor_w-window_w)*0.5", "monitor_h-window_h-40" },
+	min_size = { 1, 1 },
+	border_size = 0,
+})
 hl.window_rule({ name = "kitty-workspace", match = { class = "kitty" }, workspace = "1" })
 hl.window_rule({ name = "obsidian-workspace", match = { class = "obsidian" }, workspace = "2 silent" })
 hl.window_rule({ name = "cursor-workspace", match = { class = "(?i)Cursor" }, workspace = "3" })
@@ -194,7 +202,7 @@ exec(mainMod .. " + ALT + W", "wallsetter")
 exec(mainMod .. " + SHIFT + N", "swaync-client -rs")
 exec(mainMod .. " + W", browser)
 exec(mainMod .. " + E", "emopicker9000")
-exec(mainMod .. " + V", "handy --toggle-transcription")
+exec(mainMod .. " + V", "systemctl --user kill --signal=SIGUSR2 handy.service")
 exec(mainMod .. " + S", "flameshot gui")
 exec(mainMod .. " + SHIFT + S", 'grim -g "$(slurp)" - | tesseract - - | wl-copy')
 exec(mainMod .. " + D", "discord")

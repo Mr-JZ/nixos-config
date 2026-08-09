@@ -9,7 +9,7 @@ let
   inherit (import ../hosts/${host}/variables.nix)
     browser
     terminal
-    extraMonitorSettings
+    extraHyprlandLua
     ;
 
   luaConfig =
@@ -26,7 +26,7 @@ in
     # Host-specific monitor configuration may append native Hyprland Lua.
     extraConfig = lib.concatStrings [
       luaConfig
-      extraMonitorSettings
+      extraHyprlandLua
     ];
   };
 }

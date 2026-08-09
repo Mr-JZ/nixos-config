@@ -1,6 +1,15 @@
-{ pkgs, username, host, inputs, ... }:
-let inherit (import ./variables.nix) gitUsername gitEmail;
-in {
+{
+  pkgs,
+  username,
+  host,
+  inputs,
+  osConfig,
+  ...
+}:
+let
+  inherit (import ./variables.nix) gitUsername gitEmail;
+in
+{
   # Home Manager Settings
   home.username = "${username}";
   home.homeDirectory = "/home/${username}";
@@ -121,8 +130,12 @@ in {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
     };
-    gtk3.extraConfig = { gtk-application-prefer-dark-theme = 1; };
-    gtk4.extraConfig = { gtk-application-prefer-dark-theme = 1; };
+    gtk3.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
+    gtk4.extraConfig = {
+      gtk-application-prefer-dark-theme = 1;
+    };
   };
   # qt = {
   #   enable = true;
@@ -154,7 +167,7 @@ in {
       inherit pkgs;
       inherit host;
     })
-    # TODO: clean up this part 
+    # TODO: clean up this part
     pkgs.tmux
     pkgs.neovim
     # pkgs.vimPlugins.telescope-fzf-native-nvim
@@ -225,11 +238,21 @@ in {
     };
   };
 
+  # Handy's GTK layer-shell overlay is unreliable on some Wayland compositors.
+  # Use its supported regular-window fallback; Hyprland handles that window via
+  # the matching rule in config/hyprland.lua.
+  systemd.user.services.handy.Service.Environment = [
+    "HANDY_NO_GTK_LAYER_SHELL=1"
+    "WEBKIT_DISABLE_DMABUF_RENDERER=1"
+  ];
+
   programs = {
     gh.enable = true;
     btop = {
       enable = true;
-      settings = { vim_keys = true; };
+      settings = {
+        vim_keys = true;
+      };
     };
     kitty = {
       enable = true;
@@ -281,51 +304,41 @@ in {
           source "$(fzf-share)/key-bindings.bash"
           source "$(fzf-share)/completion.bash"
         fi
-        # SSH agent setup
-        eval "$(ssh-agent -s)"
-        ssh-add ~/github/github_mr-jz
-        source ~/.cache/api_keys
+        source ${osConfig.age.secrets.api-keys.path}
         export DIRENV_LOG_FORMAT=""
         export PATH="/home/mr-jz/.bun/bin:$PATH"
 
         export MANPAGER='nvim +Man!'
       '';
       initExtra = ''
-        source ~/.gcloudrc
+        source ${osConfig.age.secrets.gcloudrc.path}
       '';
       shellAliases = {
         ai = ''
           aider --model gemini/gemini-1.5-pro-latest --dark-mode --auto-commits $(find . -type f | fzf --multi | tr '
           ' ' ')'';
         sv = "sudo nvim";
-        fu =
-          "nh os switch --hostname ${host} --update /home/${username}/zaneyos";
-        zu =
-          "sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh)";
-        ncg =
-          "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+        fu = "nh os switch --hostname ${host} /home/${username}/zaneyos";
+        fup = "nh os switch --hostname ${host} --update /home/${username}/zaneyos";
+        zu = "sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh)";
+        ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
         v = "nvim";
         cat = "bat";
         ls = "eza --icons";
         ll = "eza -lh --icons --grid --group-directories-first";
         la = "eza -lah --icons --grid --group-directories-first";
-        ghc = ''
-          repo=$(gh repo list | fzf | awk '{print $1}'); if [ ! -z "$repo" ]; then if gh api repos/$repo/contents/package.json --silent >/dev/null 2>&1; then echo "📦 Found package.json, doing normal clone..." && gh repo clone $repo; else echo "🗃️ No package.json, doing bare clone..." && gh repo clone $repo -- --bare; fi; fi'';
+        ghc = ''repo=$(gh repo list | fzf | awk '{print $1}'); if [ ! -z "$repo" ]; then if gh api repos/$repo/contents/package.json --silent >/dev/null 2>&1; then echo "📦 Found package.json, doing normal clone..." && gh repo clone $repo; else echo "🗃️ No package.json, doing bare clone..." && gh repo clone $repo -- --bare; fi; fi'';
         ghc-c = "ghc clone $(gh repo list | fzf | awk '{print $1}')";
-        get-branch =
-          "git branch --show-current | sed 's/feature\\///' | wl-copy; echo 'copied the branch name'";
+        get-branch = "git branch --show-current | sed 's/feature\\///' | wl-copy; echo 'copied the branch name'";
         git-hash-copy = ''printf %s "$(git rev-parse HEAD)" | wl-copy'';
         z = "zoxide";
         ghd = "gh dash";
         s = "sesh connect $(sesh list | fzf --height 24)";
         ".." = "cd ..";
-        sw = ''
-          find ~/Pictures/Wallpapers ~/Pictures/Background -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | fzf --preview 'kitten icat {}' | xargs -r -I {} awww img {}'';
+        sw = ''find ~/Pictures/Wallpapers ~/Pictures/Background -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | fzf --preview 'kitten icat {}' | xargs -r -I {} awww img {}'';
         ro = "cd $(git rev-parse --show-toplevel)";
-        gs = ''
-          git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview "git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')" | sed "s/.* //" | sed "s#remotes/[^/]*/##")'';
-        cp-cursor-rules =
-          "find ~/github/awesome-cursorrules -type d | fzf --preview 'ls -l {}' --bind 'enter:execute(mkdir -p \"$(pwd)/.cursor/rules/\" && cp -v {}/*.mdc \"$(pwd)/.cursor/rules/\" && cd \"$(pwd)/.cursor/rules/\" ; kill -15 $(pgrep -n fzf) )'";
+        gs = ''git checkout $(git branch --all | grep -v HEAD | fzf --height 40% --preview "git log --color=always --format='%C(auto)%h%d %s %C(black)%C(bold)%cr' \$(echo {} | sed 's/^[* ]*//' | sed 's#remotes/[^/]*/##')" | sed "s/.* //" | sed "s#remotes/[^/]*/##")'';
+        cp-cursor-rules = "find ~/github/awesome-cursorrules -type d | fzf --preview 'ls -l {}' --bind 'enter:execute(mkdir -p \"$(pwd)/.cursor/rules/\" && cp -v {}/*.mdc \"$(pwd)/.cursor/rules/\" && cd \"$(pwd)/.cursor/rules/\" ; kill -15 $(pgrep -n fzf) )'";
         ds = "podman-vm-cli";
         gps = "git push --force-with-lease";
       };
@@ -410,16 +423,13 @@ in {
         vim = "nvim";
         nano = "nvim";
         sv = "sudo nvim";
-        fu =
-          "do { nh os switch --hostname ${host} --update /home/${username}/zaneyos }";
-        zu =
-          "do { curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh | sh }";
-        ncg =
-          "do { nix-collect-garbage --delete-old; sudo nix-collect-garbage -d; sudo /run/current-system/bin/switch-to-configuration boot }";
+        fu = "do { nh os switch --hostname ${host} /home/${username}/zaneyos }";
+        fup = "do { nh os switch --hostname ${host} --update /home/${username}/zaneyos }";
+        zu = "do { curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh | sh }";
+        ncg = "do { nix-collect-garbage --delete-old; sudo nix-collect-garbage -d; sudo /run/current-system/bin/switch-to-configuration boot }";
         v = "nvim";
         cat = "bat";
-        ghc =
-          "do { gh repo clone (gh repo list | fzf | split row --regex '\\s+' | get 0) -- --bare }";
+        ghc = "do { gh repo clone (gh repo list | fzf | split row --regex '\\s+' | get 0) -- --bare }";
         git-hash-copy = "do { git rev-parse HEAD | save --raw | pbcopy }";
         z = "zoxide";
         ghd = "gh dash";
@@ -442,43 +452,52 @@ in {
     home-manager.enable = true;
     hyprlock = {
       enable = true;
-      settings = let lib = pkgs.lib;
-      in {
-        general = {
-          disable_loading_bar = true;
-          grace = 10;
-          hide_cursor = true;
-          no_fade_in = false;
+      settings =
+        let
+          lib = pkgs.lib;
+        in
+        {
+          general = {
+            disable_loading_bar = true;
+            grace = 10;
+            hide_cursor = true;
+            no_fade_in = false;
+          };
+          background = lib.mkForce [
+            {
+              path = "/home/${username}/Pictures/Wallpapers/mountainscapedark.jpg";
+              blur_passes = 3;
+              blur_size = 8;
+            }
+          ];
+          image = [
+            {
+              path = "/home/${username}/.config/face.jpg";
+              size = 150;
+              border_size = 4;
+              border_color = "rgb(0C96F9)";
+              rounding = -1; # Negative means circle
+              position = "0, 200";
+              halign = "center";
+              valign = "center";
+            }
+          ];
+          input-field = lib.mkForce [
+            {
+              size = "200, 50";
+              position = "0, -80";
+              monitor = "";
+              dots_center = true;
+              fade_on_empty = false;
+              font_color = "rgb(CFE6F4)";
+              inner_color = "rgb(657DC2)";
+              outer_color = "rgb(0D0E15)";
+              outline_thickness = 5;
+              placeholder_text = "Password...";
+              shadow_passes = 2;
+            }
+          ];
         };
-        background = lib.mkForce [{
-          path = "/home/${username}/Pictures/Wallpapers/mountainscapedark.jpg";
-          blur_passes = 3;
-          blur_size = 8;
-        }];
-        image = [{
-          path = "/home/${username}/.config/face.jpg";
-          size = 150;
-          border_size = 4;
-          border_color = "rgb(0C96F9)";
-          rounding = -1; # Negative means circle
-          position = "0, 200";
-          halign = "center";
-          valign = "center";
-        }];
-        input-field = lib.mkForce [{
-          size = "200, 50";
-          position = "0, -80";
-          monitor = "";
-          dots_center = true;
-          fade_on_empty = false;
-          font_color = "rgb(CFE6F4)";
-          inner_color = "rgb(657DC2)";
-          outer_color = "rgb(0D0E15)";
-          outline_thickness = 5;
-          placeholder_text = "Password...";
-          shadow_passes = 2;
-        }];
-      };
     };
   };
 }

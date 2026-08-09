@@ -4,7 +4,7 @@
   gitEmail = "jan.zisenis@gmail.com";
 
   # Hyprland Settings
-  extraMonitorSettings = "";
+  extraHyprlandLua = "";
 
   # Waybar Settings
   clock24h = false;

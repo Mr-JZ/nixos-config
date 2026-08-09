@@ -1,6 +1,10 @@
 { pkgs }:
 
 pkgs.writeShellScriptBin "ai-translate-en" ''
+  if [ -r /run/agenix/api-keys ]; then
+      source /run/agenix/api-keys
+  fi
+
   # Check if required dependencies are installed
   command -v notify-send >/dev/null 2>&1 || { 
       echo "notify-send is not installed. Please install libnotify."

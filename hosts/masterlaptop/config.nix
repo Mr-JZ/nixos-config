@@ -18,6 +18,9 @@
     ../../modules/intel-drivers.nix
     ../../modules/vm-guest-services.nix
     ../../modules/local-hardware-clock.nix
+    ../../modules/core/nix-settings.nix
+    ../../modules/core/workstation-security.nix
+    ../../modules/secrets.nix
   ];
 
   boot = {
@@ -235,8 +238,8 @@
     steam = {
       enable = true;
       gamescopeSession.enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
+      remotePlay.openFirewall = false;
+      dedicatedServer.openFirewall = false;
     };
     thunar = {
       enable = true;
@@ -249,8 +252,7 @@
 
   nixpkgs.config = {
     allowUnfree = true;
-    allowUnsupportedSystem = true;
-    allowBroken = true;
+    problems.handlers.magick.broken = "warn";
   };
 
   users = {
@@ -513,25 +515,6 @@
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
 
-  # Security / Polkit
-  security.rtkit.enable = true;
-  security.polkit.enable = true;
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      if (
-        subject.isInGroup("users")
-          && (
-            action.id == "org.freedesktop.login1.reboot" ||
-            action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.power-off" ||
-            action.id == "org.freedesktop.login1.power-off-multiple-sessions"
-          )
-        )
-      {
-        return polkit.Result.YES;
-      }
-    })
-  '';
   security.pam = {
     sshAgentAuth.enable = true;
     u2f = {
@@ -543,7 +526,7 @@
     };
     yubico = {
       enable = true;
-      debug = true;
+      debug = false;
       mode = "challenge-response";
       id = [
         "25751893"
@@ -561,34 +544,6 @@
           auth include login
         '';
       };
-    };
-  };
-
-  # Optimization settings and garbage collection automation
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      substituters = [
-        "https://hyprland.cachix.org"
-        "https://devenv.cachix.org"
-      ];
-      trusted-public-keys = [
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-      ];
-      trusted-users = [
-        "root"
-        "mr-jz"
-      ];
-    };
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
     };
   };
 

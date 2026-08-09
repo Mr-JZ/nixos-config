@@ -10,7 +10,7 @@ in
 {
   users.users = {
     "${username}" = {
-      homeMode = "755";
+      homeMode = "0700";
       isNormalUser = true;
       description = "${gitUsername}";
       extraGroups = [
@@ -28,7 +28,7 @@ in
       ];
     };
     # "newuser" = {
-    #   homeMode = "755";
+    #   homeMode = "0700";
     #   isNormalUser = true;
     #   description = "New user account";
     #   extraGroups = [ "networkmanager" "wheel" "libvirtd" ];

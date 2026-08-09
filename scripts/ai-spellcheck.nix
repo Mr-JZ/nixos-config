@@ -26,7 +26,7 @@ pkgs.writeShellScriptBin "ai-spellcheck" ''
   }
 
   # Check for and source API keys file
-  API_KEYS_FILE="$HOME/.cache/api_keys"
+  API_KEYS_FILE="/run/agenix/api-keys"
   if [ -f "$API_KEYS_FILE" ]; then
       source "$API_KEYS_FILE"
   fi
