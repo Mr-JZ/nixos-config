@@ -79,6 +79,42 @@ After connecting a ZBT-2:
 The VM definition is managed by NixOS. Put permanent USB changes in the Nix file;
 edits made only in virt-manager may be replaced at the next rebuild.
 
+## Remote access
+
+Open **https://home.zisenis.digital** and sign in with your Home Assistant
+account. Cloudflare Tunnel runs on the laptop, starts at boot, and connects
+outbound; no router port forwarding is needed. The local URL remains available.
+
+The tunnel `home-assistant-masterlaptop`
+(`e5053300-9fd5-409a-9dad-62f12aed7611`) is managed by
+`hosts/masterlaptop/cloudflare-tunnel.nix`. Its only public hostname is
+`home.zisenis.digital`; unmatched requests return 404. The proxied DNS CNAME
+points to `e5053300-9fd5-409a-9dad-62f12aed7611.cfargotunnel.com`.
+
+The credential file is `/var/lib/cloudflared/home-assistant.json`, owned by root
+with mode 0600. systemd passes it to the service with `LoadCredential`; it must
+never be committed to Git or copied into the Nix store. The account management
+certificate in `~/.cloudflared/cert.pem` is not used by the running service.
+Back up credentials privately if you intend to restore this host elsewhere.
+
+Home Assistant's Settings → System → Network has Internet URL
+`https://home.zisenis.digital`. Under HTTP server → Reverse proxy,
+Trust X-Forwarded-For is enabled and the sole trusted proxy is
+`192.168.124.1` (the laptop's VM bridge address).
+
+When switching to Ethernet, update `origin` in `cloudflare-tunnel.nix` to the
+VM's reserved LAN address and replace the trusted proxy with the laptop's
+reserved LAN/bridge address. Save the HTTP settings and confirm them after
+Home Assistant restarts, then rebuild NixOS and verify the public URL.
+
+```sh
+systemctl status cloudflared-tunnel-e5053300-9fd5-409a-9dad-62f12aed7611
+journalctl -u cloudflared-tunnel-e5053300-9fd5-409a-9dad-62f12aed7611 -n 30
+```
+
+Remote access requires this laptop and its internet connection to stay online.
+The public endpoint uses Home Assistant login; it does not provide SSH access.
+
 ## Maintenance and checks
 
 ```sh

@@ -13,6 +13,7 @@
     ./hardware.nix
     ./users.nix
     ./home-server.nix
+    ./cloudflare-tunnel.nix
     ../../modules/amd-drivers.nix
     ../../modules/nvidia-drivers.nix
     ../../modules/nvidia-prime-drivers.nix
