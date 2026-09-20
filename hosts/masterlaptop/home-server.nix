@@ -39,7 +39,7 @@ let
       if [[ "''${1:-auto}" == off ]] || grep -q closed /proc/acpi/button/lid/*/state; then
         state=off
       fi
-      hyprctl dispatch dpms "$state eDP-1"
+      hyprctl dispatch "hl.dsp.dpms({action='$state', monitor='eDP-1'})"
     '';
   };
   networkXML = pkgs.writeText "haos-bootstrap.xml" ''
