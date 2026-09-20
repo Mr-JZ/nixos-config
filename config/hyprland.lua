@@ -43,7 +43,7 @@ hl.config({
 	},
 	misc = {
 		initial_workspace_tracking = 0,
-		mouse_move_enables_dpms = true,
+		mouse_move_enables_dpms = false,
 		key_press_enables_dpms = false,
 	},
 	animations = {
@@ -184,11 +184,12 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("nm-applet --indicator")
 	hl.exec_cmd("lxqt-policykit-agent")
 	hl.exec_cmd("sleep 1.5; awww img /home/@USERNAME@/Pictures/Background/Cyborg/cyborg.jpg")
-	hl.exec_cmd(terminal)
-	hl.exec_cmd("obsidian")
-	hl.exec_cmd("google-chrome")
-	hl.exec_cmd("insync start")
+	hl.exec_cmd("server-display")
 end)
+
+-- Closing the lid blanks the panel while Home Assistant keeps running.
+hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("server-display off"), { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("server-display"), { locked = true })
 
 local function exec(keys, command, options)
 	hl.bind(keys, hl.dsp.exec_cmd(command), options)

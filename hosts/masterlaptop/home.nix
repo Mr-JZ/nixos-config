@@ -211,18 +211,15 @@ in
   ];
 
   services = {
-    handy.enable = true;
+    handy.enable = false;
     hypridle = {
+      enable = true;
       settings = {
         general = {
           before_sleep_cmd = "loginctl lock-session";
-          after_sleep_cmd = "hyprctl dispatch dpms on";
+          after_sleep_cmd = "server-display";
           ignore_dbus_inhibit = false;
           lock_cmd = "hyprlock";
-          starship = {
-            enable = true;
-            package = pkgs.starship;
-          };
         };
         listener = [
           {
@@ -230,26 +227,14 @@ in
             on-timeout = "hyprlock";
           }
           {
-            timeout = 1200;
-            on-timeout = "hyprctl dispatch dpms off";
-            on-resume = "hyprctl dispatch dpms on";
-          }
-          {
-            timeout = 1800;
-            on-timeout = "systemctl suspend";
+            timeout = 300;
+            on-timeout = "server-display off";
+            on-resume = "server-display";
           }
         ];
       };
     };
   };
-
-  # Handy's GTK layer-shell overlay is unreliable on some Wayland compositors.
-  # Use its supported regular-window fallback; Hyprland handles that window via
-  # the matching rule in config/hyprland.lua.
-  systemd.user.services.handy.Service.Environment = [
-    "HANDY_NO_GTK_LAYER_SHELL=1"
-    "WEBKIT_DISABLE_DMABUF_RENDERER=1"
-  ];
 
   programs = {
     gh.enable = true;
