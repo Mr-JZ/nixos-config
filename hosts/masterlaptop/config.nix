@@ -14,6 +14,7 @@
     ./users.nix
     ./home-server.nix
     ./cloudflare-tunnel.nix
+    ./calibre.nix
     ../../modules/amd-drivers.nix
     ../../modules/nvidia-drivers.nix
     ../../modules/nvidia-prime-drivers.nix
@@ -267,8 +268,11 @@
     mutableUsers = true;
   };
 
+  programs.nix-ld.enable = true; # t3 service runs downloaded prebuilt binaries
+  environment.localBinInPath = true; # t3 lives in ~/.local/bin (install.sh), updated with t3 update
   environment.systemPackages = with pkgs; [
     inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.claude-code-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
     vim
     wget
     killall
@@ -431,6 +435,14 @@
 
   # Services to start
   services = {
+    tailscale = {
+      enable = true;
+      openFirewall = true;
+      extraSetFlags = [
+        "--operator=${username}"
+        "--ssh"
+      ];
+    };
     power-profiles-daemon.enable = true;
     kanata = {
       enable = true;

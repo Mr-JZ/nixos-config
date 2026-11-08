@@ -8,6 +8,7 @@
     stylix.url = "github:danth/stylix";
     agenix.url = "github:ryantm/agenix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    claude-code-nix.url = "github:sadjow/claude-code-nix";
     handy = {
       url = "github:cjpais/Handy/v0.9.5";
     };

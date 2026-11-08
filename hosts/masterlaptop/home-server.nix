@@ -5,15 +5,18 @@
   ...
 }:
 let
-  # Set this to the USB Ethernet interface reported by `ip -br link` once
-  # connected, e.g. "enx001122334455". Wi-Fi cannot be a Linux bridge port.
-  ethernetInterface = null;
+  # null selects the bootstrap network; any other value enables the bridge.
+  # The profile itself matches usbEthernetMac, so the name need not stay current.
+  ethernetInterface = "enp3s0f3u1u3c2";
   # Add the Thread radio's actual USB IDs after connecting it (`lsusb`).
   # Example shape: [ { vendor = "0x1234"; product = "0x5678"; } ]
-  usbDevices = [ ];
+  usbDevices = [ { vendor = "0x303a"; product = "0x831a"; } ];
   bootstrap = ethernetInterface == null;
   disk = "/var/lib/libvirt/images/home-assistant/haos.qcow2";
   mac = "52:54:00:48:41:01";
+  usbEthernetMac = "f8:e4:3b:55:4c:6a";
+  # The VM must not start before its bridge exists, or it comes up detached.
+  haBridgeDevice = "sys-subsystem-net-devices-ha\\x2dbr0.device";
 
   # Enforce the lid state even at the text login screen, without a desktop.
   lidBacklight = pkgs.writeShellApplication {
@@ -60,7 +63,7 @@ let
       <name>home-assistant</name>
       <uuid>caa5e5ae-e967-4bad-82e3-ce4c6d8d786e</uuid>
       <memory unit='MiB'>4096</memory>
-      <vcpu placement='static'>2</vcpu>
+      <vcpu placement='static'>4</vcpu>
       <os firmware='efi'>
         <type arch='x86_64' machine='q35'>hvm</type>
         <firmware><feature enabled='no' name='secure-boot'/></firmware>
@@ -172,13 +175,13 @@ in
     };
   };
   systemd.services.server-power-profile = {
-    description = "Select the power-saving profile for the home server";
+    description = "Select the performance profile for the home server";
     wantedBy = [ "multi-user.target" ];
     wants = [ "power-profiles-daemon.service" ];
     after = [ "power-profiles-daemon.service" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.power-profiles-daemon}/bin/powerprofilesctl set power-saver";
+      ExecStart = "${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance";
     };
   };
 
@@ -195,6 +198,8 @@ in
   environment.systemPackages = [
     installer
     display
+    pkgs.sccache
+    pkgs.mold
     pkgs.virt-manager
   ];
   networking.enableIPv6 = true;
@@ -256,6 +261,7 @@ in
         autoconnect = true;
       };
       bridge.stp = false;
+      bridge.mac-address = "F8:E4:3B:55:4C:6A";
       ipv4.method = "auto";
       ipv6.method = "auto";
     };
@@ -263,23 +269,97 @@ in
       connection = {
         id = "ha-ethernet";
         type = "ethernet";
-        interface-name = ethernetInterface;
         controller = "ha-br0";
         port-type = "bridge";
         autoconnect = true;
         autoconnect-priority = 100;
       };
+      # Matched by MAC: the USB adapter's interface name changes with its bus path.
+      ethernet.mac-address = lib.toUpper usbEthernetMac;
     };
   };
+
+  # The adapter ignores frames for the VM's MAC until its RX filter is
+  # reprogrammed after joining the bridge.
+  networking.networkmanager.dispatcherScripts = lib.mkIf (!bootstrap) [
+    {
+      type = "basic";
+      source = pkgs.writeShellScript "ha-usb-rx-filter" ''
+        [ "$2" = up ] || exit 0
+        [ "$(${pkgs.coreutils}/bin/cat "/sys/class/net/$1/address")" = "${usbEthernetMac}" ] || exit 0
+        # ha-br0 shares this MAC, so only act on the real bridge port.
+        [ -e "/sys/class/net/$1/brport" ] || exit 0
+        ${pkgs.iproute2}/bin/ip link set "$1" multicast off
+        ${pkgs.iproute2}/bin/ip link set "$1" multicast on
+      '';
+    }
+  ];
+
+  # Tuned for zram-backed swap: compressed RAM is far cheaper than dropping cache.
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 150;
+    "vm.page-cluster" = 0;
+  };
+
+  fileSystems."/".options = [ "noatime" ];
+
+  # A full root disk pauses the Home Assistant VM, so keep headroom automatically.
+  nix.settings.min-free = 10 * 1024 * 1024 * 1024;
+  nix.settings.max-free = 30 * 1024 * 1024 * 1024;
+
+  # External SSD holding all media. nofail: a missing disk must not block boot.
+  fileSystems."/mnt/media" = {
+    device = "/dev/disk/by-label/media";
+    fsType = "ext4";
+    options = [ "nofail" "noatime" "x-systemd.device-timeout=10s" ];
+  };
+
+  # NFSv4 share for the Home Assistant apps, reachable only from the VM.
+  services.nfs.server = lib.mkIf (!bootstrap) {
+    enable = lib.mkForce true;
+    exports = "/mnt/media 192.168.178.56(rw,async,no_subtree_check,no_root_squash)";
+  };
+  # Required by the NFS module; stays firewalled, only 2049 is opened below.
+  services.rpcbind.enable = lib.mkIf (!bootstrap) (lib.mkForce true);
+  networking.firewall.extraCommands = lib.mkIf (!bootstrap) ''
+    iptables -I nixos-fw 1 -i ha-br0 -s 192.168.178.56 -p tcp --dport 2049 -j nixos-fw-accept
+  '';
+
+  # A full disk pauses the VM; resume it once there is room again.
+  systemd.services.home-assistant-vm-resume = {
+    description = "Resume Home Assistant after a disk-full pause";
+    path = [ pkgs.libvirt pkgs.coreutils pkgs.gnugrep ];
+    script = ''
+      virsh -c qemu:///system domstate home-assistant --reason | grep -q 'paused (I/O error)' || exit 0
+      free=$(df -BG --output=avail '${disk}' | tail -1 | tr -dc 0-9)
+      if [ "$free" -lt 20 ]; then
+        echo "Home Assistant paused by I/O error, only ''${free}G free: not resuming" >&2
+        exit 1
+      fi
+      virsh -c qemu:///system resume home-assistant
+    '';
+    serviceConfig.Type = "oneshot";
+  };
+  systemd.timers.home-assistant-vm-resume = {
+    wantedBy = [ "timers.target" ];
+    timerConfig.OnUnitActiveSec = "2min";
+    timerConfig.OnBootSec = "5min";
+  };
+
   systemd.services.home-assistant-vm = {
     description = "Define and start Home Assistant OS";
     wantedBy = [ "multi-user.target" ];
-    requires = [ "libvirtd.service" ] ++ lib.optional bootstrap "haos-bootstrap-network.service";
+    requires = [
+      "libvirtd.service"
+    ]
+    ++ lib.optional bootstrap "haos-bootstrap-network.service"
+    ++ lib.optional (!bootstrap) haBridgeDevice;
     after = [
       "libvirtd.service"
       "NetworkManager-wait-online.service"
     ]
-    ++ lib.optional bootstrap "haos-bootstrap-network.service";
+    ++ lib.optional bootstrap "haos-bootstrap-network.service"
+    ++ lib.optional (!bootstrap) haBridgeDevice;
     wants = [ "network-online.target" ];
     unitConfig.ConditionPathExists = disk;
     path = [
