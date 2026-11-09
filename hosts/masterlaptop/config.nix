@@ -350,7 +350,6 @@
     insync-nautilus
     jq
     inkscape
-    hyprland-qtutils
     devenv
     # wl-screenrec
     lf
@@ -391,7 +390,10 @@
     viu
     zathura
     zoom-us
-    ncspot
+    # shortcut: nixpkgs forces system AWS-LC but ncspot lacks it, drop once nixpkgs adds it.
+    (ncspot.overrideAttrs (old: {
+      buildInputs = old.buildInputs ++ [ aws-lc ];
+    }))
     wiki-tui
     mprocs
     openssl
@@ -524,6 +526,8 @@
   services.blueman.enable = true;
 
   systemd.coredump.settings.Coredump.MaxUse = "1G";
+  # UPower is otherwise D-Bus activated, and nothing requests it on this headless server.
+  systemd.services.upower.wantedBy = [ "multi-user.target" ];
 
   # Prefer compressed RAM swap before falling back to the disk swap partition.
   zramSwap = {

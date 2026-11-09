@@ -26,7 +26,7 @@ let
       power=0
       if grep -q closed /proc/acpi/button/lid/*/state; then power=4; fi
       for backlight in /sys/class/backlight/*/bl_power; do
-        [[ -w "$backlight" ]] && echo "$power" > "$backlight"
+        if [[ -w "$backlight" ]]; then echo "$power" > "$backlight"; fi
       done
     '';
   };
@@ -167,7 +167,11 @@ in
   };
   systemd.services.server-lid-backlight = {
     description = "Apply laptop lid state to the internal backlight";
-    wantedBy = [ "multi-user.target" ];
+    # The panel's backlight can register after multi-user.target is reached.
+    wantedBy = [
+      "multi-user.target"
+      "systemd-backlight@backlight:amdgpu_bl1.service"
+    ];
     after = [ "systemd-backlight@backlight:amdgpu_bl1.service" ];
     serviceConfig = {
       Type = "oneshot";
