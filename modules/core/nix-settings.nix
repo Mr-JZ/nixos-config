@@ -17,7 +17,13 @@
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
       trusted-users = [ "root" ];
+      # 14 GB of RAM is shared with the Home Assistant VM and dev workloads.
+      max-jobs = 4;
+      cores = 4;
     };
+
+    daemonCPUSchedPolicy = "idle";
+    daemonIOSchedClass = "idle";
 
     gc = {
       automatic = true;

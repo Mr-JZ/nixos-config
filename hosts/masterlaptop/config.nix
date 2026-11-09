@@ -29,8 +29,6 @@
   boot = {
     # Kernel
     kernelPackages = pkgs.linuxPackages;
-    # Let amd-pstate automatically favor efficiency on battery and performance on AC.
-    kernelParams = [ "amd_dynamic_epp=enable" ];
     # Bootloader.
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -482,8 +480,14 @@
       };
     };
     smartd = {
-      enable = false;
+      enable = true;
       autodetect = true;
+    };
+    fwupd.enable = true;
+    # Hibernation is disabled on this server, so a dying battery must power off cleanly.
+    upower = {
+      enable = true;
+      criticalPowerAction = "PowerOff";
     };
     libinput.enable = true;
     fstrim.enable = true;
@@ -518,6 +522,8 @@
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = false;
   services.blueman.enable = true;
+
+  systemd.coredump.settings.Coredump.MaxUse = "1G";
 
   # Prefer compressed RAM swap before falling back to the disk swap partition.
   zramSwap = {
